@@ -1,0 +1,3 @@
+[submodule "libogg.js"]
+	path = libogg.js
+	url = git@github.com:mohayonao/libogg.js.git

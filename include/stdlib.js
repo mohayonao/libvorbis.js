@@ -33,6 +33,40 @@ function set_kv(dst, src) {
   }
 }
 
+var uint8   = 0;
+var int16   = 1;
+var int32   = 2;
+var uint32  = 3;
+var float32 = 4;
+
+function calloc(n, size) {
+  var a, i, m;
+  if (Array.isArray(n)) {
+    if (n.length === 2) {
+      a = new Array(n[0]);
+      for (i = 0; i < n[0]; i++) {
+        a[i] = calloc(n[1], size);
+      }
+      return a;
+    }
+  } else {
+    if (typeof size === "number") {
+      switch (size) {
+      case uint8  : return new Uint8Array(n);
+      case int16  : return new Int16Array(n);
+      case int32  : return new Int32Array(n);
+      case uint32 : return new Uint32Array(n);
+      case float32: return new Float32Array(n);
+      }
+    } else if (typeof size === "function") {
+      a = new Array(n); for (i = 0; i < n; i++) { a[i] = size(); } return a;
+    } else {
+      a = new Array(n); for (i = 0; i < n; i++) { a[i] = null  ; } return a;
+    }
+  }
+  throw new Error("calloc failed.");
+}
+
 function realloc(src, newSize) {
   var ret = new src.constructor(newSize);
   ret.set(src);
@@ -41,36 +75,4 @@ function realloc(src, newSize) {
 
 function copy(dst, src, offset) {
   dst.set(src, offset||0);
-}
-
-function zeroclear(buf) {
-  buf.constructor.zeroclear(buf);
-}
-
-function ilog(v) {
-  var ret=0;
-  while(v){
-    ret++;
-    v>>=1;
-  }
-  return(ret);
-}
-
-function ilog2(v) {
-  var ret=0;
-  if(v){--v;}
-  while(v){
-    ret++;
-    v>>=1;
-  }
-  return(ret);
-}
-
-function icount(v) {
-  var ret=0;
-  while(v){
-    ret+=v&1;
-    v>>=1;
-  }
-  return(ret);
 }

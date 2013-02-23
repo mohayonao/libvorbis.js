@@ -11,31 +11,39 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: [
-          "include/*.js", "include/vorbis/*.js",
-          "src/*.js", "examples/*.js", "test/*.js"
+          "include/*.js", "include/vorbis/*.js", "src/*.js"
         ],
-        tasks: ["concat", "jshint", "uglify"],
-        options: {
-          interrupt: true
-        }
+        tasks: ["concat", "jshint:dest", "uglify"]
+      },
+      examples: {
+        files: ["examples/*.js"],
+        tasks: ["jshint:examples"]
+      },
+      tests: {
+        files: ["test/*.js"],
+        tasks: ["jshint:tests"]
       }
     },
     concat: {
       dist: {
         src: [
           "build/header.txt",
-          "include/*.js",
-          "libogg.js/include/ogg/*.js",
-          "include/vorbis/*.js",
+          "include/stdlib.js",
+          "libogg.js/include/ogg/ogg.h.js",
+          "include/vorbis/codec.h.js",
           "libogg.js/src/*.js",
           "src/*.js",
+          "libogg.js/include/exports.js",
+          "include/exports.js",
           "build/footer.txt"
         ],
         dest: "liboggvorbis.dev.js"
       }
     },
     jshint: {
-      all: ["liboggvorbis.dev.js", "examples/*.js", "test/*.js"],
+      dest    : ["liboggvorbis.dev.js"],
+      examples: ["examples/*.js"],
+      tests   : ["test/*.js"],
       options: {
         curly   : false,
         eqeqeq  : true,
@@ -64,6 +72,5 @@ module.exports = function(grunt) {
     clean: ["liboggvorbis.dev.js", "liboggvorbis.js", "liboggvorbis.js.map"]
   });
   
-  grunt.registerTask("default", ["concat", "jshint", "uglify"]);
+  grunt.registerTask("default", ["concat", "jshint:dest", "uglify"]);
 };
-

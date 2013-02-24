@@ -59,7 +59,37 @@ function vorbis_info_clear(vi) {
 /* Header packing/unpacking ********************************************/
 
 function _vorbis_unpack_info(vi, opb) {
-  NOT_IMPLEMENTED();
+  var ci=vi.codec_setup;
+  if(!ci)return(OV_EFAULT);
+  
+  vi.version=oggpack_read(opb,32);
+  if(vi.version!==0)return(OV_EVERSION);
+  
+  vi.channels=oggpack_read(opb,8);
+  vi.rate=oggpack_read(opb,32);
+  
+  vi.bitrate_upper=oggpack_read(opb,32);
+  vi.bitrate_nominal=oggpack_read(opb,32);
+  vi.bitrate_lower=oggpack_read(opb,32);
+  
+  ci.blocksizes[0]=1<<oggpack_read(opb,4);
+  ci.blocksizes[1]=1<<oggpack_read(opb,4);
+
+  err_out:while(1){
+    if(vi.rate<1)break err_out;
+    if(vi.channels<1)break err_out;
+    if(ci.blocksizes[0]<64)break err_out;
+    if(ci.blocksizes[1]<ci.blocksizes[0])break err_out;
+    if(ci.blocksizes[1]>8192)break err_out;
+
+    if(oggpack_read(opb,1)!==1)break err_out; /* EOP check */
+
+    return(0);
+  }
+  
+  // err_out:
+  vorbis_info_clear(vi);
+  return(OV_EBADHEADER);
 }
 
 function _vorbis_unpack_comment(vc, opb) {

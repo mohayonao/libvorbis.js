@@ -30,7 +30,8 @@ function fprintf(stream, format) {
       sys.print(str);
     }
   } else {
-    if (!stderr) {
+    if (!stderr.fp) {
+      str = str.replace(/\n$/g, "");
       sys.error(str);
     }
   }

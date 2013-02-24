@@ -123,7 +123,54 @@ function res0_unpack(vi, opb) {
 }
 
 function res0_look(vd, vr) {
-  NOT_IMPLEMENTED();
+  var info=vr;
+  var look=vorbis_look_residue0();
+  var ci=vd.vi.codec_setup;
+
+  var j,k,acc=0;
+  var dim;
+  var maxstage=0;
+  var stages,val,mult,deco;
+  
+  look.info=info;
+  
+  look.parts=info.partitions;
+  look.fullbooks=ci.fullbooks;
+  look.phrasebook=ci.fullbooks[info.groupbook];
+  dim=look.phrasebook.dim;
+  
+  look.partbooks=calloc(look.parts,[]);
+  
+  for(j=0;j<look.parts;j++){
+    stages=ilog(info.secondstages[j]);
+    if(stages){
+      if(stages>maxstage)maxstage=stages;
+      look.partbooks[j]=calloc(stages,codebook);
+      for(k=0;k<stages;k++)
+        if(info.secondstages[j]&(1<<k)){
+          look.partbooks[j][k]=ci.fullbooks[info.booklist[acc++]];
+        }
+    }
+  }
+  
+  look.partvals=1;
+  for(j=0;j<dim;j++)
+    look.partvals*=look.parts;
+  
+  look.stages=maxstage;
+  look.decodemap=calloc(look.partvals,[]);
+  for(j=0;j<look.partvals;j++){
+    val=j;
+    mult=_int(look.partvals/look.parts);
+    look.decodemap[j]=calloc(dim,int16);
+    for(k=0;k<dim;k++){
+      deco=_int(val/mult);
+      val-=deco*mult;
+      mult=_int(mult/look.parts);
+      look.decodemap[j][k]=deco;
+    }
+  }
+  return(look);
 }
 
 /* break an abstraction and copy some code for performance purposes */

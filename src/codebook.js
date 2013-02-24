@@ -152,7 +152,15 @@ function decode_packed_entry_number(book, b) {
 
 /* returns the [original, not compacted] entry number or -1 on eof *********/
 function vorbis_book_decode(book, b) {
-  NOT_IMPLEMENTED();
+  var packed_entry;
+  if(book.used_entries>0){
+    packed_entry=decode_packed_entry_number(book,b);
+    if(packed_entry>=0)
+      return(book.dec_index[packed_entry]);
+  }
+
+  /* if there's no dec_index, the codebook unpacking isn't collapsed */
+  return(-1);
 }
 
 /* returns 0 on OK or -1 on eof *************************************/

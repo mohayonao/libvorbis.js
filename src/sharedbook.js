@@ -127,7 +127,9 @@ function _book_unquantize(b, n, sparsemap) {
 }
 
 function vorbis_staticbook_destroy(b) {
-  NOT_IMPLEMENTED();
+  if(b.allocedp){
+    static_codebook(b);
+  } /* otherwise, it is in static memory */
 }
 
 function vorbis_book_clear(b){

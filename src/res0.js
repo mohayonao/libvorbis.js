@@ -55,7 +55,71 @@ function res0_pack(vr, opb){
 
 /* vorbis_info is for range checking */
 function res0_unpack(vi, opb) {
-  NOT_IMPLEMENTED();
+  var j,acc=0;
+  var info=vorbis_info_residue0();
+  var ci=vi.codec_setup;
+  var cascade,cflag,c,book,entries,dim,partvals;
+  
+  info.begin=oggpack_read(opb,24);
+  info.end=oggpack_read(opb,24);
+  info.grouping=oggpack_read(opb,24)+1;
+  info.partitions=oggpack_read(opb,6)+1;
+  info.groupbook=oggpack_read(opb,8);
+  
+  err_out:while(1){
+    /* check for premature EOP */
+    if(info.groupbook<0)break err_out;
+    
+    for(j=0;j<info.partitions;j++){
+      cascade=oggpack_read(opb,3);
+      cflag=oggpack_read(opb,1);
+      if(cflag<0) break err_out;
+      if(cflag){
+        c=oggpack_read(opb,5);
+        if(c<0) break err_out;
+        cascade|=(c<<3);
+      }
+      info.secondstages[j]=cascade;
+      
+      acc+=icount(cascade);
+    }
+    for(j=0;j<acc;j++){
+      book=oggpack_read(opb,8);
+      if(book<0) break err_out;
+      info.booklist[j]=book;
+    }
+    
+    if(info.groupbook>=ci.books)break err_out;
+    for(j=0;j<acc;j++){
+      if(info.booklist[j]>=ci.books)break err_out;
+      if(ci.book_param[info.booklist[j]].maptype===0)break err_out;
+    }
+    
+    /* verify the phrasebook is not specifying an impossible or
+       inconsistent partitioning scheme. */
+    /* modify the phrasebook ranging check from r16327; an early beta
+       encoder had a bug where it used an oversized phrasebook by
+       accident.  These files should continue to be playable, but don't
+       allow an exploit */
+    {
+      entries = ci.book_param[info.groupbook].entries;
+      dim = ci.book_param[info.groupbook].dim;
+      partvals = 1;
+      if (dim<1) break err_out;
+      while(dim>0){
+        partvals *= info.partitions;
+        if(partvals > entries) break err_out;
+        dim--;
+      }
+      info.partvals = partvals;
+    }
+
+    return(info);
+  }
+  
+  // errout:
+  res0_free_info(info);
+  return(NULL);
 }
 
 function res0_look(vd, vr) {

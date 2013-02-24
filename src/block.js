@@ -67,7 +67,24 @@ function _vorbis_block_alloc(vb, bytes) {
 
 /* reap the chain, pull the ripcord */
 function _vorbis_block_ripcord(vb) {
-  NOT_IMPLEMENTED();
+  /* reap the chain */
+  var reap=vb.reap;
+  var next;
+  while(reap){
+    next=reap.next;
+    struct_alloc_chain(reap);
+    reap=next;
+  }
+  /* consolidate storage */
+  if(vb.totaluse){
+    vb.localstore=realloc(vb.localstore,vb.totaluse+vb.localalloc);
+    vb.localalloc+=vb.totaluse;
+    vb.totaluse=0;
+  }
+  
+  /* pull the ripcord */
+  vb.localtop=0;
+  vb.reap=NULL;
 }
 
 function vorbis_block_clear(vb) {

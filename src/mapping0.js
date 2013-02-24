@@ -102,7 +102,7 @@ function mapping0_inverse(vb, l) {
       nonzero[i]=1;
     else
       nonzero[i]=0;
-    memset(vb.pcm[i],0,n/2);
+    valset(vb.pcm[i],0,n/2);
   }
   
   /* channel coupling can 'dirty' the nonzero listing */

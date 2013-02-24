@@ -77,7 +77,106 @@ function mapping0_forward(vb){
 }
 
 function mapping0_inverse(vb, l) {
-  NOT_IMPLEMENTED();
+  var vd=vb.vd;
+  var vi=vd.vi;
+  var ci=vi.codec_setup;
+  var b=vd.backend_state;
+  var info=l;
+  
+  var i,j;
+  var n=vb.pcmend=ci.blocksizes[vb.W];
+  
+  var pcmbundle=calloc(vi.channels,[]);
+  var zerobundle=calloc(vi.channels,int16);
+  
+  var nonzero=calloc(vi.channels,int16);
+  var floormemo=calloc(vi.channels,[]);
+  var submap,ch_in_bundle,pcmM,pcmA,mag,ang,pcm;
+  
+  /* recover the spectral envelope; store it in the PCM vector for now */
+  for(i=0;i<vi.channels;i++){
+    submap=info.chmuxlist[i];
+    floormemo[i]=_floor_P[ci.floor_type[info.floorsubmap[submap]]]
+      .inverse1(vb,b.flr[info.floorsubmap[submap]]);
+    if(floormemo[i])
+      nonzero[i]=1;
+    else
+      nonzero[i]=0;
+    memset(vb.pcm[i],0,n/2);
+  }
+  
+  /* channel coupling can 'dirty' the nonzero listing */
+  for(i=0;i<info.coupling_steps;i++){
+    if(nonzero[info.coupling_mag[i]] ||
+       nonzero[info.coupling_ang[i]]){
+      nonzero[info.coupling_mag[i]]=1;
+      nonzero[info.coupling_ang[i]]=1;
+    }
+  }
+  
+  /* recover the residue into our working vectors */
+  for(i=0;i<info.submaps;i++){
+    ch_in_bundle=0;
+    for(j=0;j<vi.channels;j++){
+      if(info.chmuxlist[j]===i){
+        if(nonzero[j])
+          zerobundle[ch_in_bundle]=1;
+        else
+          zerobundle[ch_in_bundle]=0;
+        pcmbundle[ch_in_bundle++]=vb.pcm[j];
+      }
+    }
+
+    _residue_P[ci.residue_type[info.residuesubmap[i]]].
+      inverse(vb,b.residue[info.residuesubmap[i]],
+              pcmbundle,zerobundle,ch_in_bundle);
+  }
+  
+  /* channel coupling */
+  for(i=info.coupling_steps-1;i>=0;i--){
+    pcmM=vb.pcm[info.coupling_mag[i]];
+    pcmA=vb.pcm[info.coupling_ang[i]];
+    
+    for(j=0;j<n/2;j++){
+      mag=pcmM[j];
+      ang=pcmA[j];
+      
+      if(mag>0)
+        if(ang>0){
+          pcmM[j]=mag;
+          pcmA[j]=mag-ang;
+        }else{
+          pcmA[j]=mag;
+          pcmM[j]=mag+ang;
+        }
+      else
+        if(ang>0){
+          pcmM[j]=mag;
+          pcmA[j]=mag+ang;
+        }else{
+          pcmA[j]=mag;
+          pcmM[j]=mag-ang;
+        }
+    }
+  }
+  
+  /* compute and apply spectral envelope */
+  for(i=0;i<vi.channels;i++){
+    pcm=vb.pcm[i];
+    submap=info.chmuxlist[i];
+    _floor_P[ci.floor_type[info.floorsubmap[submap]]]
+      .inverse2(vb,b.flr[info.floorsubmap[submap]],floormemo[i],pcm);
+  }
+  
+  /* transform the PCM data; takes PCM vector, vb; modifies PCM vector */
+  /* only MDCT right now.... */
+  for(i=0;i<vi.channels;i++){
+    pcm=vb.pcm[i];
+    mdct_backward(b.transform[vb.W][0],pcm,pcm);
+  }
+  
+  /* all done! */
+  return(0);
 }
 
 /* export hooks */

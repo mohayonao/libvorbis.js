@@ -11,6 +11,7 @@ function VorbisDspState() {
   vorbis_dsp_state(this);
 
   this.init = vorbis_synthesis_init.bind(null, this);
+  this.block_init = vorbis_block_init.bind(null, this);
 }
 exports.vorbis.DspState = VorbisDspState;
 

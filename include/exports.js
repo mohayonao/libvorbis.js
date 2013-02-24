@@ -12,6 +12,8 @@ exports.vorbis.DspState = VorbisDspState;
 
 function VorbisComment() {
   vorbis_comment(this);
+  
+  this.init = vorbis_comment_init.bind(null, this);
 }
 exports.vorbis.Comment = VorbisComment;
 

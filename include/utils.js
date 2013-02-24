@@ -85,3 +85,8 @@ function float32_unpack(val) {
   if(sign)mant= -mant;
   return(ldexp(mant,exp-(VQ_FMAN-1)-VQ_FEXP_BIAS));
 }
+
+// floor1.c
+function icomp(a,b){
+  return a[0]-b[0];
+}

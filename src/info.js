@@ -78,7 +78,57 @@ function vorbis_synthesis_idheader(op) {
    with bitstream comments and a third packet that holds the
    codebook. */
 function vorbis_synthesis_headerin(vi, vc, op) {
-  NOT_IMPLEMENTED();
+  var opb = oggpack_buffer();
+  var buffer, packtype;
+  
+  if(op){
+    oggpack_readinit(opb,op.packet,op.bytes);
+    
+    /* Which of the three types of header is this? */
+    /* Also verify header-ness, vorbis */
+    {
+      packtype=oggpack_read(opb,8);
+      buffer = _v_readstring(opb,buffer,6);
+      if(buffer!=="vorbis"){
+        /* not a vorbis header */
+        return(OV_ENOTVORBIS);
+      }
+      switch(packtype){
+      case 0x01: /* least significant *bit* is read first */
+        if(!op.b_o_s){
+          /* Not the initial packet */
+          return(OV_EBADHEADER);
+        }
+        if(vi.rate!==0){
+          /* previously initialized info header */
+          return(OV_EBADHEADER);
+        }
+        
+        return(_vorbis_unpack_info(vi,opb));
+        
+      case 0x03: /* least significant *bit* is read first */
+        if(vi.rate===0){
+          /* um... we didn't get the initial header */
+          return(OV_EBADHEADER);
+        }
+        
+        return(_vorbis_unpack_comment(vc,opb));
+        
+      case 0x05: /* least significant *bit* is read first */
+        if(vi.rate===0 || vc.vendor===NULL){
+          /* um... we didn;t get the initial header or comments yet */
+          return(OV_EBADHEADER);
+        }
+        
+        return(_vorbis_unpack_books(vi,opb));
+        
+      default:
+        /* Not a valid vorbis header type */
+        return(OV_EBADHEADER);
+      }
+    }
+  }
+  return(OV_EBADHEADER);
 }
 
 /* pack side **********************************************************/

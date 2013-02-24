@@ -131,7 +131,9 @@ function vorbis_staticbook_destroy(b) {
 }
 
 function vorbis_book_clear(b){
-  NOT_IMPLEMENTED();
+  /* static book is not cleared; we're likely called on the lookup and
+     the static codebook belongs to the info struct */
+  codebook(b);
 }
 
 function vorbis_book_init_encode(c, s) {

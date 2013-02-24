@@ -133,7 +133,7 @@ function floor1_look(vd, _in) {
   var info=_in;
   var look=vorbis_look_floor1();
   var i,j,n=0;
-  var lo,hi,lx,hx,currentx,x;
+  var lo,hi,lx,hx,currentx,x,index;
   
   look.vi=info;
   look.n=info.postlist[1];
@@ -156,7 +156,11 @@ function floor1_look(vd, _in) {
   sortpointer.sort(icomp);
   
   /* points from sort order back to range number */
-  for(i=0;i<n;i++)look.forward_index[i]=sortpointer[i]-info.postlist;
+  // for(i=0;i<n;i++)look->forward_index[i]=sortpointer[i]-info->postlist;
+  for(i=0;i<n;i++){
+    index=(sortpointer[i].byteOffset-info.postlist.byteOffset)/2;
+    look.forward_index[i]=index;
+  }
   /* points from range order to sorted position */
   for(i=0;i<n;i++)look.reverse_index[look.forward_index[i]]=i;
   /* we actually need the post values too */

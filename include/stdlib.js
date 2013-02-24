@@ -76,3 +76,7 @@ function realloc(src, newSize) {
 function copy(dst, src, offset) {
   dst.set(src, offset||0);
 }
+
+function valset(dst, val, size) {
+  for(var i=0;i<size;i++)dst[i]=val;
+}

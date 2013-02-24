@@ -96,7 +96,12 @@ function vorbis_synthesis_restart(v) {
 }
 
 function vorbis_synthesis_init(v, vi) {
-  NOT_IMPLEMENTED();
+  if(_vds_shared_init(v,vi,0)){
+    vorbis_dsp_clear(v);
+    return 1;
+  }
+  vorbis_synthesis_restart(v);
+  return 0;
 }
 
 /* Unlike in analysis, the window is only partially applied for each

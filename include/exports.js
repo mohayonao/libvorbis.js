@@ -2,6 +2,7 @@ function VorbisInfo() {
   vorbis_info(this);
   
   this.init = vorbis_info_init.bind(null, this);
+  this.clear = vorbis_info_clear.bind(null, this);
   this.headerin = vorbis_synthesis_headerin.bind(null, this);
 }
 exports.vorbis.Info = VorbisInfo;

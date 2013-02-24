@@ -9,7 +9,11 @@ function _v_writestring(o, s, bytes) {
 }
 
 function _v_readstring(o, buf, bytes) {
-  NOT_IMPLEMENTED();
+  buf="";
+  while(bytes--){
+    buf+=String.fromCharCode(oggpack_read(o,8));
+  }
+  return(buf);
 }
 
 function vorbis_comment_init(vc) {
@@ -88,7 +92,7 @@ function vorbis_synthesis_headerin(vi, vc, op) {
     /* Also verify header-ness, vorbis */
     {
       packtype=oggpack_read(opb,8);
-      buffer = _v_readstring(opb,buffer,6);
+      buffer=_v_readstring(opb,buffer,6);
       if(buffer!=="vorbis"){
         /* not a vorbis header */
         return(OV_ENOTVORBIS);

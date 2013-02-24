@@ -17,6 +17,7 @@ function VorbisComment() {
   vorbis_comment(this);
   
   this.init = vorbis_comment_init.bind(null, this);
+  this.clear = vorbis_comment_clear.bind(null, this);
 }
 exports.vorbis.Comment = VorbisComment;
 

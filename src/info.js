@@ -13,7 +13,7 @@ function _v_readstring(o, buf, bytes) {
 }
 
 function vorbis_comment_init(vc) {
-  NOT_IMPLEMENTED();
+  vorbis_comment(vc);
 }
 
 function vorbis_comment_add(vc, comment) {

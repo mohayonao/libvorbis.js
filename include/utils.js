@@ -33,3 +33,8 @@ function icount(v){
 function rint(x) {
   return (x+0.5)|0;
 }
+
+// sharedbook.c
+function sort32a(a,b){
+  return a[0]-b[0];
+}

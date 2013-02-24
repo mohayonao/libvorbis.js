@@ -46,7 +46,7 @@ function _make_words(l, n, sparsecount) {
          markers were dangling from our just-taken node.  Dangle them
          from our *new* node. */
       for(j=length+1;j<33;j++)
-        if((marker[j]>>1) === entry){
+        if((marker[j]>>>1) === entry){
           entry=marker[j];
           marker[j]=marker[j-1]<<1;
         }else
@@ -73,7 +73,7 @@ function _make_words(l, n, sparsecount) {
     temp=0;
     for(j=0;j<l[i];j++){
       temp<<=1;
-      temp|=(r[count]>>j)&1;
+      temp|=(r[count]>>>j)&1;
     }
     
     if(sparsecount){

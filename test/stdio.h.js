@@ -13,7 +13,7 @@ global.exit = exit;
 
 function fprintf(stream, format) {
   var argv = Array.prototype.slice.call(arguments, 2);
-  var str = format.replace(/%([.\d+])?([ldxcs]+)/g, function(m, num, chr) {
+  var str = format.replace(/%([.\d+])?([ldxcsf]+)/g, function(m, num, chr) {
     var val = argv.shift();
     switch (chr) {
     case "c":
@@ -39,7 +39,7 @@ function fprintf(stream, format) {
 global.fprintf = fprintf;
 
 function printf() {
-  var args = Array.prototype.slice(arguments);
+  var args = Array.prototype.slice.call(arguments);
   args.unshift(stdout);
   fprintf.apply(null, args);
 }

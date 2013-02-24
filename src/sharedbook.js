@@ -123,7 +123,66 @@ function _book_maptype1_quantvals(b) {
    the values in the quant vector). in map type 2, all the values came
    in in an explicit list.  Both value lists must be unpacked */
 function _book_unquantize(b, n, sparsemap) {
-  NOT_IMPLEMENTED();
+  var j,k,count=0;
+  var quantvals,mindel,delta,r,last,indexdiv,index,val;
+  if(b.maptype===1 || b.maptype===2){
+    mindel=float32_unpack(b.q_min);
+    delta=float32_unpack(b.q_delta);
+    r=calloc(n*b.dim,float32);
+    
+    /* maptype 1 and 2 both use a quantized value vector, but
+       different sizes */
+    switch(b.maptype){
+    case 1:
+      /* most of the time, entries%dimensions == 0, but we need to be
+         well defined.  We define that the possible vales at each
+         scalar is values == entries/dim.  If entries%dim != 0, we'll
+         have 'too few' values (values*dim<entries), which means that
+         we'll have 'left over' entries; left over entries use zeroed
+         values (and are wasted).  So don't generate codebooks like
+         that */
+      quantvals=_book_maptype1_quantvals(b);
+      for(j=0;j<b.entries;j++){
+        if((sparsemap && b.lengthlist[j]) || !sparsemap){
+          last=0;
+          indexdiv=1;
+          for(k=0;k<b.dim;k++){
+            index= (j/indexdiv)%quantvals;
+            val=b.quantlist[index];
+            val=Math.abs(val)*delta+mindel+last;
+            if(b.q_sequencep)last=val;
+            if(sparsemap)
+              r[sparsemap[count]*b.dim+k]=val;
+            else
+              r[count*b.dim+k]=val;
+            indexdiv*=quantvals;
+          }
+          count++;
+        }
+      }
+      break;
+    case 2:
+      for(j=0;j<b.entries;j++){
+        if((sparsemap && b.lengthlist[j]) || !sparsemap){
+          last=0;
+          
+          for(k=0;k<b.dim;k++){
+            val=b.quantlist[j*b.dim+k];
+            val=Math.abs(val)*delta+mindel+last;
+            if(b.q_sequencep)last=val;
+            if(sparsemap)
+              r[sparsemap[count]*b.dim+k]=val;
+            else
+              r[count*b.dim+k]=val;
+          }
+          count++;
+        }
+      }
+      break;
+    }
+    return(r);
+  }
+  return(NULL);
 }
 
 function vorbis_staticbook_destroy(b) {

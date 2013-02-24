@@ -152,6 +152,7 @@ function floor1_look(vd, _in) {
   /* also store a sorted position index */
   for(i=0;i<n;i++)sortpointer[i]=pointer(info.postlist,i);
   //qsort(sortpointer,n,sizeof(*sortpointer),icomp);
+  sortpointer=sortpointer.slice(0,n);
   sortpointer.sort(icomp);
   
   /* points from sort order back to range number */

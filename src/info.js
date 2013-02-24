@@ -93,7 +93,34 @@ function _vorbis_unpack_info(vi, opb) {
 }
 
 function _vorbis_unpack_comment(vc, opb) {
-  NOT_IMPLEMENTED();
+  var i, len;
+  var vendorlen=oggpack_read(opb,32);
+  err_out:while(1){
+    if(vendorlen<0)break err_out;
+    if(vendorlen>opb.storage-8)break err_out;
+    vc.vendor=_v_readstring(opb,vc.vendor,vendorlen);
+    i=oggpack_read(opb,32);
+    if(i<0)break err_out;
+    if(i>((opb.storage-oggpack_bytes(opb))>>2))break err_out;
+    vc.comments=i;
+    vc.user_comments=calloc(vc.comments+1,[]);
+    vc.comment_lengths=calloc(vc.comments+1, int16);
+    
+    for(i=0;i<vc.comments;i++){
+      len=oggpack_read(opb,32);
+      if(len<0)break err_out;
+      if(len>opb.storage-oggpack_bytes(opb))break err_out;
+      vc.comment_lengths[i]=len;
+      vc.user_comments[i]=_v_readstring(opb,vc.user_comments[i],len);
+    }
+    if(oggpack_read(opb,1)!==1)break err_out; /* EOP check */
+    
+    return(0);
+  }
+  
+  // err_out:
+  vorbis_comment_clear(vc);
+  return(OV_EBADHEADER);
 }
 
 /* all of the real encoding details are here.  The modes, books,

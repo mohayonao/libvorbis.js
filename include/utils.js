@@ -28,3 +28,8 @@ function icount(v){
   }
   return(ret);
 }
+
+// os.h
+function rint(x) {
+  return (x+0.5)|0;
+}

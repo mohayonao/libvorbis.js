@@ -203,7 +203,26 @@ function vorbis_analysis_blockout(v, vb) {
 }
 
 function vorbis_synthesis_restart(v) {
-  NOT_IMPLEMENTED();
+  var vi=v.vi;
+  var ci;
+  var hs;
+  
+  if(!v.backend_state)return -1;
+  if(!vi)return -1;
+  ci=vi.codec_setup;
+  if(!ci)return -1;
+  hs=ci.halfrate_flag;
+  
+  v.centerW=ci.blocksizes[1]>>(hs+1);
+  v.pcm_current=v.centerW>>hs;
+  
+  v.pcm_returned=-1;
+  v.granulepos=-1;
+  v.sequence=-1;
+  v.eofflag=0;
+  v.backend_state.sample_count=-1;
+  
+  return(0);
 }
 
 function vorbis_synthesis_init(v, vi) {

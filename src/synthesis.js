@@ -55,9 +55,9 @@ function vorbis_synthesis(vb, op) {
   // vb.pcm=_vorbis_block_alloc(vb,sizeof(*vb.pcm)*vi.channels);
   // for(i=0;i<vi.channels;i++)
   //   vb.pcm[i]=_vorbis_block_alloc(vb,vb.pcmend*sizeof(*vb.pcm[i]));
-  vb.pcm=_vorbis_block_alloc(vb,vi.channels);
+  vb.pcm=calloc(vi.channels,[]);
   for(i=0;i<vi.channels;i++)
-    vb.pcm[i]=_vorbis_block_alloc(vb,vb.pcmend);
+    vb.pcm[i]=_vorbis_block_alloc(vb,vb.pcmend,float32);
   
   /* unpack_header enforces range checking */
   type=ci.map_type[ci.mode_param[mode].mapping];

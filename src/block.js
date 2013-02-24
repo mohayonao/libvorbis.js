@@ -61,10 +61,9 @@ function vorbis_block_init(v, vb) {
   return(0);
 }
 
-function _vorbis_block_alloc(vb, bytes) {
+function _vorbis_block_alloc(vb, size, type) {
   var ret,link;
-  bytes=(bytes+(WORD_ALIGN-1)) & ~(WORD_ALIGN-1);
-  if(bytes+vb.localtop>vb.localalloc){
+  if(size+vb.localtop>vb.localalloc){
     /* can't just _ogg_realloc... there are outstanding pointers */
     if(vb.localstore){
       link=struct_alloc_chain();
@@ -74,13 +73,13 @@ function _vorbis_block_alloc(vb, bytes) {
       vb.reap=link;
     }
     /* highly conservative */
-    vb.localalloc=bytes;
-    vb.localstore=calloc(vb.localalloc,uint8);
+    vb.localalloc=size;
+    vb.localstore=calloc(vb.localalloc,type);
     vb.localtop=0;
   }
   {
     ret=pointer(vb.localstore,vb.localtop);
-    vb.localtop+=bytes;
+    vb.localtop+=size;
     return ret;
   }
 }

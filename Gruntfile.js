@@ -39,6 +39,7 @@ module.exports = function(grunt) {
         src: [
           "build/header.txt",
           "include/stdlib.js",
+          "include/utils.js",
           "libogg.js/include/ogg/ogg.h.js",
           "include/vorbis/codec.h.js",
           "libogg.js/src/*.js",

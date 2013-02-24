@@ -9,7 +9,31 @@ function _make_words(l, n, sparsecount) {
    that's portable and totally safe against roundoff, but I haven't
    thought of it.  Therefore, we opt on the side of caution */
 function _book_maptype1_quantvals(b) {
-  NOT_IMPLEMENTED();
+  var vals=Math.floor(Math.pow(b.entries,1/b.dim));
+  var acc,acc1,i;
+  
+  /* the above *should* be reliable, but we'll not assume that FP is
+     ever reliable when bitstream sync is at stake; verify via integer
+     means that vals really is the greatest value of dim for which
+     vals^b.bim <= b.entries */
+  /* treat the above as an initial guess */
+  while(1){
+    acc=1;
+    acc1=1;
+    for(i=0;i<b.dim;i++){
+      acc*=vals;
+      acc1*=vals+1;
+    }
+    if(acc<=b.entries && acc1>b.entries){
+      return(vals);
+    }else{
+      if(acc>b.entries){
+        vals--;
+      }else{
+        vals++;
+      }
+    }
+  }
 }
 
 /* unpack the quantized list of values for encode/decode ***********/

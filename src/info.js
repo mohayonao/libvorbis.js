@@ -44,7 +44,8 @@ function vorbis_info_blocksize(vi, zo) {
 
 /* used by synthesis, which has a full, alloced vi */
 function vorbis_info_init(vi) {
-  NOT_IMPLEMENTED();
+  vorbis_info(vi);
+  vi.codec_setup=codec_setup_info();
 }
 
 function vorbis_info_clear(vi) {

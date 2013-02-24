@@ -133,7 +133,51 @@ function vorbis_book_encode(book, a, b) {
 }
 
 function decode_packed_entry_number(book, b) {
-  NOT_IMPLEMENTED();
+  var read=book.dec_maxlength;
+  var lo,hi;
+  var lok = oggpack_look(b,book.dec_firsttablen);
+  var entry,testword,p,test;
+  
+  if (lok >= 0) {
+    entry = book.dec_firsttable[lok];
+    if(entry&0x80000000){
+      lo=(entry>>>15)&0x7fff;
+      hi=book.used_entries-(entry&0x7fff);
+    }else{
+      oggpack_adv(b, book.dec_codelengths[entry-1]);
+      return(entry-1);
+    }
+  }else{
+    lo=0;
+    hi=book.used_entries;
+  }
+  
+  lok = oggpack_look(b, read);
+  
+  while(lok<0 && read>1)
+    lok = oggpack_look(b, --read);
+  if(lok<0)return -1;
+  
+  /* bisect search for the codeword in the ordered list */
+  {
+    testword=bitreverse(lok);
+    
+    while(hi-lo>1){
+      p=(hi-lo)>>1;
+      test=book.codelist[lo+p]>testword;
+      lo+=p&(test-1);
+      hi-=p&(-test);
+    }
+    
+    if(book.dec_codelengths[lo]<=read){
+      oggpack_adv(b, book.dec_codelengths[lo]);
+      return(lo);
+    }
+  }
+  
+  oggpack_adv(b, read);
+  
+  return(-1);
 }
 
 /* Decode side is specced and easier, because we don't need to find

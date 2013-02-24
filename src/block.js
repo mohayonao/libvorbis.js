@@ -178,7 +178,9 @@ function vorbis_analysis_init(v, vi) {
 }
 
 function vorbis_dsp_clear(v) {
-  NOT_IMPLEMENTED();
+  if(v){
+    vorbis_dsp_state(v);
+  }
 }
 
 function vorbis_analysis_buffer(v, vals) {

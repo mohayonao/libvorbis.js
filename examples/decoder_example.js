@@ -164,11 +164,11 @@ function main() {
     /* OK, got and parsed all three headers. Initialize the Vorbis
        packet->PCM decoder. */
     if(vd.init(vi)===0){ /* central decode state */
-      vd.block_init(vd,vb);          /* local state for most of the decode
-                                        so multiple block decodes can
-                                        proceed in parallel. We could init
-                                        multiple vorbis_block structures
-                                        for vd here */
+      vd.block_init(vb);          /* local state for most of the decode
+                                     so multiple block decodes can
+                                     proceed in parallel. We could init
+                                     multiple vorbis_block structures
+                                     for vd here */
       
       /* The rest is just a straight decode loop until end of stream */
       while(!eos){

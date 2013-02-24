@@ -19,6 +19,7 @@ function vorbis_func_floor(p) {
   p.free_look = NOP;
   p.inverse1  = NOP;
   p.inverse2  = NOP;
+  p.__name = "vorbis_func_floor";
   
   return p;
 }
@@ -45,6 +46,9 @@ function vorbis_info_floor0(p) {
   p.books = calloc(16, int16);
   p.lessthan = 0;
   p.greaterthan = 0;
+  p.__name = "vorbis_info_floor0";
+  
+  return p;
 }
 
 var VIF_POSIT = 63;
@@ -90,6 +94,7 @@ function vorbis_info_floor1(p) {
   p.twofitweight = 0;
   p.twofitatten = 0;
   p.n = 0;
+  p.__name = "vorbis_info_floor1";
   
   return p;
 }
@@ -120,7 +125,8 @@ function vorbis_func_residue(p) {
   p.klass = NOP;
   p.forward = NOP;
   p.inverse = NOP;
-
+  p.__name = "vorbis_func_residue";
+  
   return p;
 }
 
@@ -152,6 +158,7 @@ function vorbis_info_residue0(p) {
   p.booklist = calloc(512, int16);
   p.classmetric1 = calloc(64, int16);
   p.classmetric2 = calloc(64, int16);
+  p.__name = "vorbis_info_residue0";
   
   return p;
 }
@@ -172,6 +179,7 @@ function vorbis_func_mapping(p) {
   p.free_info = NOP;
   p.forward = NOP;
   p.inverse = NOP;
+  p.__name = "vorbis_func_mapping";
   
   return p;
 }
@@ -196,6 +204,7 @@ function vorbis_info_mapping0(p) {
   p.coupling_steps = 0;
   p.coupling_mag = calloc(256, int16);
   p.coupling_ang = calloc(256, int16);
+  p.__name = "vorbis_info_mapping0";
   
   return p;
 }

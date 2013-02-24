@@ -37,6 +37,7 @@ function vorbis_look_residue0(p) {
   p.postbits = 0;
   p.phrasebits = 0;
   p.frames = 0;
+  p.__name = "vorbis_look_residue0";
   
   return p;
 }

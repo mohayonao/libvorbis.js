@@ -36,6 +36,7 @@ function lsfit_acc(p) {
   p.y2b = 0;
   p.xyb = 0;
   p.bn = 0;
+  p.__name = "lsfit_acc";
   
   return p;
 }

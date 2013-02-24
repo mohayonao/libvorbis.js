@@ -4,10 +4,10 @@ function vorbis_info(p) {
   // int version;
   // int channels;
   // long rate;
-
+  
   // /* The below bitrate declarations are *hints*.
   //    Combinations of the three values carry the following implications:
-
+  
   //    all three set to the same value:
   //      implies a fixed rate bitstream
   //    only nominal set:
@@ -19,12 +19,12 @@ function vorbis_info(p) {
   //    none set:
   //      the coder does not care to speculate.
   // */
-
+  
   // long bitrate_upper;
   // long bitrate_nominal;
   // long bitrate_lower;
   // long bitrate_window;
-
+  
   // void *codec_setup;
   
   p.version = 0;
@@ -35,6 +35,7 @@ function vorbis_info(p) {
   p.bitrate_lower = 0;
   p.bitrate_window = 0;
   p.codec_setup = null;
+  p.__name = "vorbis_info";
   
   return p;
 }
@@ -48,29 +49,29 @@ function vorbis_dsp_state(p) {
   
   // int analysisp;
   // vorbis_info *vi;
-
+  
   // float **pcm;
   // float **pcmret;
   // int      pcm_storage;
   // int      pcm_current;
   // int      pcm_returned;
-
+  
   // int  preextrapolate;
   // int  eofflag;
-
+  
   // long lW;
   // long W;
   // long nW;
   // long centerW;
-
+  
   // ogg_int64_t granulepos;
   // ogg_int64_t sequence;
-
+  
   // ogg_int64_t glue_bits;
   // ogg_int64_t time_bits;
   // ogg_int64_t floor_bits;
   // ogg_int64_t res_bits;
-
+  
   // void       *backend_state;
   
   p.analysisp = 0;
@@ -93,7 +94,8 @@ function vorbis_dsp_state(p) {
   p.floor_bits = 0;
   p.res_bits = 0;
   p.backend_state = null;
-
+  p.__name = "vorbis_dsp_state";
+  
   return p;
 }
 
@@ -104,18 +106,18 @@ function vorbis_block(p) {
   // /* necessary stream state for linking to the framing abstraction */
   // float  **pcm;       /* this is a pointer into local storage */
   // oggpack_buffer opb;
-
+  
   // long  lW;
   // long  W;
   // long  nW;
   // int   pcmend;
   // int   mode;
-
+  
   // int         eofflag;
   // ogg_int64_t granulepos;
   // ogg_int64_t sequence;
   // vorbis_dsp_state *vd; /* For read-only access of configuration */
-
+  
   // /* local storage to avoid remallocing; it's up to the mapping to
   //    structure it */
   // void               *localstore;
@@ -123,13 +125,13 @@ function vorbis_block(p) {
   // long                localalloc;
   // long                totaluse;
   // struct alloc_chain *reap;
-
+  
   // /* bitmetrics for the frame */
   // long glue_bits;
   // long time_bits;
   // long floor_bits;
   // long res_bits;
-
+  
   // void *internal;
   
   p.pcm = null;
@@ -153,6 +155,7 @@ function vorbis_block(p) {
   p.floor_bits = 0;
   p.res_bits = 0;
   p.internal = null;
+  p.__name = "vorbis_block";
   
   return p;
 }
@@ -171,6 +174,7 @@ function struct_alloc_chain(p) {
 
   p.ptr = null;
   p.next = null;
+  p.__name = "struct_alloc_chain";
   
   return p;
 }
@@ -198,6 +202,7 @@ function vorbis_comment(p) {
   p.comment_lengths = null;
   p.comments = 0;
   p.vendor = "";
+  p.__name = "vorbis_comment";
   
   return p;
 }

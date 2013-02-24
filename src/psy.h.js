@@ -60,6 +60,7 @@ function vorbis_info_psy(p) {
   p.normal_start = 0;
   p.normal_partition = 0;
   p.normal_thresh = 0;
+  p.__name = "vorbis_info_psy";
   
   return p;
 }
@@ -95,6 +96,7 @@ function vorbis_info_psy_global(p) {
   p.coupling_prepointamp = calloc(PACKETBLOBS, int16);
   p.coupling_postpointamp = calloc(PACKETBLOBS, int16);
   p.sliding_lowpass = calloc([2,PACKETBLOBS], int16);
+  p.__name = "vorbis_info_psy_global";
   
   return p;
 }
@@ -112,6 +114,7 @@ function vorbis_look_psy_global(p) {
   p.channels = 0;
   p.gi = null;
   p.coupling_pointlimit = calloc([2, P_NOISECURVES], int16);
+  p.__name = "vorbis_look_psy_global";
   
   return p;
 }
@@ -150,6 +153,7 @@ function vorbis_look_psy(p) {
   p.total_octave_lines = 0;
   p.rate = 0;
   p.m_val = 0;
+  p.__name = "vorbis_look_psy";
   
   return p;
 }

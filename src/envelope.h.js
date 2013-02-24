@@ -26,6 +26,7 @@ function envelope_filter_state(p) {
   p.nearDC_acc = 0;
   p.nearDC_partialacc = 0;
   p.nearptr = 0;
+  p.__name = "envelope_filter_state";
   
   return p;
 }
@@ -42,6 +43,7 @@ function envelope_band(p) {
   p.end = 0;
   p.window = null;
   p.total = 0;
+  p.__name = "envelope_band";
   
   return p;
 }
@@ -82,6 +84,7 @@ function envelope_lookup(p) {
   p.current = 0;
   p.curmark = 0;
   p.cursor = 0;
+  p.__name = "envelope_lookup";
   
   return p;
 }

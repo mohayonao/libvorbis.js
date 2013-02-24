@@ -21,6 +21,7 @@ function vorbis_block_internal(p) {
   p.ampmax = 0;
   p.blocktype = 0;
   p.packetblob = calloc(PACKETBLOBS, []);
+  p.__name = "vorbis_block_internal";
   
   return p;
 }
@@ -38,6 +39,7 @@ function vorbis_info_mode(p) {
   p.windowtype = 0;
   p.transformtype = 0;
   p.mapping = 0;
+  p.__name = "vorbis_info_mode";
   
   return p;
 }
@@ -83,6 +85,7 @@ function private_state(p) {
   p.header2 = "";
   p.bms = bitrate_manager_state();
   p.sample_count = 0;
+  p.__name = "private_state";
   
   return p;
 }
@@ -153,6 +156,7 @@ function codec_setup_info(p) {
   p.bi = bitrate_manager_info();
   p.hi = highlevel_encode_setup();
   p.halfrate_flag = 0;
+  p.__name = "codec_setup_info";
   
   return p;
 }
@@ -188,6 +192,7 @@ function vorbis_look_floor1(p) {
   p.phrasebits = 0;
   p.postbits = 0;
   p.frames = 0;
+  p.__name = "vorbis_info_floor1";
   
   return p;
 }

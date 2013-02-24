@@ -8,6 +8,7 @@ function static_bookblock(p) {
   // const static_codebook *books[12][4];
   
   p.books = calloc([12,4], []);
+  p.__name = "static_bookblock";
   
   return p;
 }
@@ -32,6 +33,7 @@ function vorbis_residue_template(p) {
   p.book_aux_managed = null;
   p.books_base = null;
   p.books_base_managed = null;
+  p.__name = "vorbis_residue_template";
   
   return p;
 }
@@ -44,6 +46,7 @@ function vorbis_mapping_template(p) {
   
   p.map = null;
   p.res = null;
+  p.__name = "vorbis_mapping_template";
   
   return p;
 }
@@ -54,6 +57,7 @@ function vp_adjblock(p) {
   // int block[P_BANDS];
   
   p.block = calloc(P_BANDS, int16);
+  p.__name = "vp_adjblock";
   
   return p;
 }
@@ -64,6 +68,7 @@ function compandblock(p) {
   // int data[NOISE_COMPAND_LEVELS];
   
   p.data = calloc(NOISE_COMPAND_LEVELS, int16);
+  p.__name = "compandblock";
   
   return p;
 }
@@ -85,6 +90,7 @@ function att3(p) {
   p.att = calloc(P_NOISECURVES, int16);
   p.boost = 0;
   p.decay = 0;
+  p.__name = "att3";
   
   return p;
 }
@@ -101,6 +107,7 @@ function adj_stereo(p) {
   p.post = calloc(PACKETBLOBS, int16);
   p.kHz = calloc(PACKETBLOBS, float32);
   p.lowpasskHz = calloc(PACKETBLOBS, float32);
+  p.__name = "adj_stereo";
   
   return p;
 }
@@ -115,6 +122,7 @@ function noiseguard(p){
   p.lo = 0;
   p.hi = 0;
   p.fixed = 0;
+  p.__name = "noiseguard";
   
   return p;
 }
@@ -125,6 +133,7 @@ function noise3(p) {
   // int data[P_NOISECURVES][17];
   
   p.data = calloc([P_NOISECURVES, 17], int16);
+  p.__name = "noise3";
   
   return p;
 }
@@ -219,6 +228,7 @@ function ve_setup_data_template(p) {
   p.floor_mappings = 0;
   p.floor_mapping_list = null;
   p.maps = null;
+  p.__name = "ve_setup_data_template";
   
   return p;
 }

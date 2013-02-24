@@ -10,6 +10,7 @@ function highlevel_byblocktype(p) {
   p.tone_peaklimit_setting = 0;
   p.noise_bias_setting = 0;
   p.noise_compand_setting = 0;
+  p.__name = "highlevel_byblocktype";
   
   return p;
 }
@@ -72,6 +73,7 @@ function highlevel_encode_setup(p) {
   p.amplitude_track_dBpersec = 0;
   p.trigger_setting = 0;
   p.block = calloc(4, highlevel_byblocktype);
+  p.__name = "highlevel_encode_setup";
   
   return p;
 }

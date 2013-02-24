@@ -25,6 +25,7 @@ function mdct_lookup(p) {
   p.trig = null;
   p.bitrev = null;
   p.scale = 0;
+  p.__name = "mdct_lookup";
   
   return p;
 }

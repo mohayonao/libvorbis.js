@@ -44,6 +44,7 @@ function static_codebook(p) {
   p.q_sequencep = 0;
   p.quantlist = null;
   p.allocedp = 0;
+  p.__name = "static_codebook";
   
   return p;
 }
@@ -87,6 +88,7 @@ function codebook(p) {
   p.quantvals = 0;
   p.minval = 0;
   p.delta = 0;
+  p.__name = "codebook";
   
   return p;
 }

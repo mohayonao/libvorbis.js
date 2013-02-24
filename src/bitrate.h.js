@@ -26,6 +26,7 @@ function bitrate_manager_state(p) {
   p.avgfloat = 0;
   p.vb = null;
   p.choice = 0;
+  p.__name = "bitrate_manager_state";
   
   return p;
 }
@@ -47,6 +48,7 @@ function bitrate_manager_info(p) {
   p.reservoir_bits = 0;
   p.reservoir_bias = 0;
   p.slew_damp = 0;
+  p.__name = "bitrate_manager_info";
   
   return p;
 }

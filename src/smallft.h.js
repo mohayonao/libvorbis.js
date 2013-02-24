@@ -8,6 +8,7 @@ function drft_lookup(p) {
   p.n = 0;
   p.trigcache = null;
   p.splitcache = null;
+  p.__name = "drft_lookup";
   
   return p;
 }

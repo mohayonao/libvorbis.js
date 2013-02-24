@@ -39,8 +39,26 @@
 /* block abstraction setup *********************************************/
 var WORD_ALIGN = 8;
 
-function vorbis_block_init(v, dv) {
-  NOT_IMPLEMENTED();
+function vorbis_block_init(v, vb) {
+  var i,vbi;
+  vorbis_block(vb);
+  vb.vd=v;
+  vb.localalloc=0;
+  vb.localstore=NULL;
+  if(v.analysisp){
+    vbi=vb.internal=vorbis_block_internal();
+    vbi.ampmax=-9999;
+    
+    for(i=0;i<PACKETBLOBS;i++){
+      if(i===PACKETBLOBS>>1){
+        vbi.packetblob[i]=vb.opb;
+      }else{
+        vbi.packetblob[i]=oggpack_buffer();
+      }
+      oggpack_writeinit(vbi.packetblob[i]);
+    }
+  }
+  return(0);
 }
 
 function _vorbis_block_alloc(vb, bytes) {

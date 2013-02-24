@@ -25,5 +25,7 @@ exports.vorbis.Comment = VorbisComment;
 
 function VorbisBlock() {
   vorbis_block(this);
+  
+  this.synthesis = vorbis_synthesis.bind(null, this);
 }
 exports.vorbis.Block = VorbisBlock;

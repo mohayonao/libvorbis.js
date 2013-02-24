@@ -37,7 +37,9 @@ function vorbis_comment_query_count(vc, tag) {
 }
 
 function vorbis_comment_clear(vc) {
-  NOT_IMPLEMENTED();
+  if(vc){
+    vorbis_comment(vc);
+  }
 }
 
 /* blocksize 0 is guaranteed to be short, 1 is guaranteed to be long.

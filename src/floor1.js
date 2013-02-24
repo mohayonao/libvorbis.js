@@ -322,7 +322,93 @@ function floor1_encode(opb, vb, look, post, ilogmask) {
 }
 
 function floor1_inverse1(vb, _in) {
-  NOT_IMPLEMENTED();
+  var look=_in;
+  var info=look.vi;
+  var ci=vb.vd.vi.codec_setup;
+  var i,j,k;
+  var fit_value,klass,cdim,csubbits,csub,cval,book;
+  var predicted,hiroom,loroom,room,val;
+  
+  var books=ci.fullbooks;
+  
+  eop:while(1){
+    /* unpack wrapped/predicted values from stream */
+    if(oggpack_read(vb.opb,1)===1){
+      fit_value=_vorbis_block_alloc(vb,look.posts,int16);
+      
+      fit_value[0]=oggpack_read(vb.opb,ilog(look.quant_q-1));
+      fit_value[1]=oggpack_read(vb.opb,ilog(look.quant_q-1));
+      
+      /* partition by partition */
+      for(i=0,j=2;i<info.partitions;i++){
+        klass=info.partitionclass[i];
+        cdim=info.class_dim[klass];
+        csubbits=info.class_subs[klass];
+        csub=1<<csubbits;
+        cval=0;
+        
+        /* decode the partition's first stage cascade value */
+        if(csubbits){
+          cval=vorbis_book_decode(books[info.class_book[klass]],vb.opb);
+          
+          if(cval===-1)break eop;
+        }
+        
+        for(k=0;k<cdim;k++){
+          book=info.class_subbook[klass][cval&(csub-1)];
+          cval>>=csubbits;
+          if(book>=0){
+            if((fit_value[j+k]=vorbis_book_decode(books[book],vb.opb))===-1)
+              break eop;
+          }else{
+            fit_value[j+k]=0;
+          }
+        }
+        j+=cdim;
+      }
+      
+      /* unwrap positive values and reconsitute via linear interpolation */
+      for(i=2;i<look.posts;i++){
+        predicted=render_point(info.postlist[look.loneighbor[i-2]],
+                               info.postlist[look.hineighbor[i-2]],
+                               fit_value[look.loneighbor[i-2]],
+                               fit_value[look.hineighbor[i-2]],
+                               info.postlist[i]);
+        hiroom=look.quant_q-predicted;
+        loroom=predicted;
+        room=(hiroom<loroom?hiroom:loroom)<<1;
+        val=fit_value[i];
+        
+        if(val){
+          if(val>=room){
+            if(hiroom>loroom){
+              val = val-loroom;
+            }else{
+              val = -1-(val-hiroom);
+            }
+          }else{
+            if(val&1){
+              val= -((val+1)>>>1);
+            }else{
+              val>>>=1;
+            }
+          }
+          
+          fit_value[i]=(val+predicted)&0x7fff;
+          fit_value[look.loneighbor[i-2]]&=0x7fff;
+          fit_value[look.hineighbor[i-2]]&=0x7fff;
+          
+        }else{
+          fit_value[i]=predicted|0x8000;
+        }
+      }
+      
+      return(fit_value);
+    }
+  }
+  
+  // eop:
+  return(NULL);
 }
 
 function floor1_inverse2(vb, _in,memo, out) {

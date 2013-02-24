@@ -127,7 +127,79 @@ function floor1_unpack(vi, opb) {
 }
 
 function floor1_look(vd, _in) {
-  NOT_IMPLEMENTED();
+  
+  var sortpointer=calloc(VIF_POSIT+2,[]);
+  var info=_in;
+  var look=vorbis_look_floor1();
+  var i,j,n=0;
+  var lo,hi,lx,hx,currentx,x;
+  
+  look.vi=info;
+  look.n=info.postlist[1];
+  
+  /* we drop each position value in-between already decoded values,
+     and use linear interpolation to predict each new value past the
+     edges.  The positions are read in the order of the position
+     list... we precompute the bounding positions in the lookup.  Of
+     course, the neighbors can change (if a position is declined), but
+     this is an initial mapping */
+  
+  for(i=0;i<info.partitions;i++)n+=info.class_dim[info.partitionclass[i]];
+  n+=2;
+  look.posts=n;
+  
+  /* also store a sorted position index */
+  for(i=0;i<n;i++)sortpointer[i]=pointer(info.postlist,i);
+  //qsort(sortpointer,n,sizeof(*sortpointer),icomp);
+  sortpointer.sort(icomp);
+  
+  /* points from sort order back to range number */
+  for(i=0;i<n;i++)look.forward_index[i]=sortpointer[i]-info.postlist;
+  /* points from range order to sorted position */
+  for(i=0;i<n;i++)look.reverse_index[look.forward_index[i]]=i;
+  /* we actually need the post values too */
+  for(i=0;i<n;i++)look.sorted_index[i]=info.postlist[look.forward_index[i]];
+
+  /* quantize values to multiplier spec */
+  switch(info.mult){
+  case 1: /* 1024 . 256 */
+    look.quant_q=256;
+    break;
+  case 2: /* 1024 . 128 */
+    look.quant_q=128;
+    break;
+  case 3: /* 1024 . 86 */
+    look.quant_q=86;
+    break;
+  case 4: /* 1024 . 64 */
+    look.quant_q=64;
+    break;
+  }
+  
+  /* discover our neighbors for decode where we don't use fit flags
+     (that would push the neighbors outward) */
+  for(i=0;i<n-2;i++){
+    lo=0;
+    hi=1;
+    lx=0;
+    hx=look.n;
+    currentx=info.postlist[i+2];
+    for(j=0;j<i+2;j++){
+      x=info.postlist[j];
+      if(x>lx && x<currentx){
+        lo=j;
+        lx=x;
+      }
+      if(x<hx && x>currentx){
+        hi=j;
+        hx=x;
+      }
+    }
+    look.loneighbor[i]=lo;
+    look.hineighbor[i]=hi;
+  }
+
+  return(look);
 }
 
 function render_point(x0, x1, y0, y1, x) {

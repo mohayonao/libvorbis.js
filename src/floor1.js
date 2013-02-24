@@ -111,8 +111,9 @@ function floor1_unpack(vi, opb) {
       // qsort(sortpointer,count+2,sizeof(*sortpointer),icomp);
       
       sortpointer=calloc(VIF_POSIT+2,[]);
-      for(j=0;j<count+2;j++)sortpointer[j]=info.postlist+j;
-      sortpointer.sort();
+      for(j=0;j<count+2;j++)sortpointer[j]=pointer(info.postlist,j);
+      sortpointer=sortpointer.slice(0,count+2);
+      sortpointer.sort(icomp);
       
       for(j=1;j<count+2;j++)
         if(sortpointer[j-1]===sortpointer[j])break err_out;

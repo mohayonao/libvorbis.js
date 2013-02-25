@@ -162,12 +162,12 @@ function res0_look(vd, vr) {
   look.decodemap=calloc(look.partvals,[]);
   for(j=0;j<look.partvals;j++){
     val=j;
-    mult=_int(look.partvals/look.parts);
+    mult=int(look.partvals/look.parts);
     look.decodemap[j]=calloc(dim,int16);
     for(k=0;k<dim;k++){
-      deco=_int(val/mult);
+      deco=int(val/mult);
       val-=deco*mult;
-      mult=_int(mult/look.parts);
+      mult=int(mult/look.parts);
       look.decodemap[j][k]=deco;
     }
   }

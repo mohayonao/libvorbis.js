@@ -198,7 +198,7 @@ function _vds_shared_init(v, vi, encp) {
     v.W=0;  /* current window size */
     
     /* all vector indexes */
-    v.centerW=_int(ci.blocksizes[1]/2);
+    v.centerW=int(ci.blocksizes[1]/2);
     
     v.pcm_current=v.centerW;
     

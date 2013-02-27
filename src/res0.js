@@ -216,7 +216,14 @@ function res1_class(vb, vl, _in, nonzero, ch) {
 }
 
 function res1_inverse(vb, vl, _in, nonzero, ch) {
-  NOT_IMPLEMENTED();
+  var i,used=0;
+  for(i=0;i<ch;i++)
+    if(nonzero[i])
+      _in[used++]=_in[i];
+  if(used)
+    return(_01inverse(vb,vl,_in,used,vorbis_book_decodev_add));
+  else
+    return(0);
 }
 
 function res2_class(vb, vl, _in, nonzero, ch) {

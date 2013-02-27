@@ -219,7 +219,7 @@ function _01inverse(vb, vl, _in, ch, decodepart) {
       partword=calloc(ch,[]);
       
       for(j=0;j<ch;j++)
-        partword[j]=_vorbis_block_alloc(vb,partwords,int16);
+        partword[j]=_vorbis_block_alloc(vb,partwords,[]);
       
       for(s=0;s<look.stages;s++){
 

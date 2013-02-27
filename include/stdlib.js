@@ -68,7 +68,7 @@ function pointer(src, offset, length) {
     throw new Error("Ops.. Array["+offset+"]..");
   } else {
     offset = (src.byteOffset + offset * src.BYTES_PER_ELEMENT);
-    assert.isNotNaN(offset)
+    assert.isNotNaN(offset);
     
     if (offset < 0) {
       OUT_OF_RANGE_STATE = 1;
@@ -76,9 +76,9 @@ function pointer(src, offset, length) {
     }
     
     if (typeof length === "number") {
-      return new src.constructor(src.buffer, offset, length);  
-    } 
-    return new src.constructor(src.buffer, offset);    
+      return new src.constructor(src.buffer, offset, length);
+    }
+    return new src.constructor(src.buffer, offset);
   }
 }
 

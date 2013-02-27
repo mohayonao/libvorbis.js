@@ -73,6 +73,9 @@ function pointer(src, offset, length) {
     if (offset < 0) {
       OUT_OF_RANGE_STATE = 1;
       return null;
+    } else if (offset >= src.buffer.byteLength) {
+      OUT_OF_RANGE_STATE = 1;
+      return null;
     }
     
     if (typeof length === "number") {

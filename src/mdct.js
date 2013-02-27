@@ -190,7 +190,7 @@ function mdct_butterflies(init, x, points) {
   }
   
   for(j=0;j<points;j+=32)
-    mdct_butterfly_32(x[j]);
+    mdct_butterfly_32(pointer(x,j));
 }
 
 function mdct_clear(l) {

@@ -10,45 +10,49 @@ assert.isNotNaN = function(num) {
   }
   return 0;
 };
+assert._toString = function(object) {
+  return typeof(object) + "(" + object.toString() + ")";
+};
+
 assert.instanceOf = function(object, typename) {
   switch (typename) {
   case "int":
   case "long":
     if (typeof object !== "number") {
-      throw new TypeError("require:"+typename+", but:"+object);
+      throw new TypeError("require:"+typename+", but:" + assert._toString(object));
     }
     if (int(object) !== object) {
-      throw new TypeError("require:int, but:float, " + object);
+      throw new TypeError("require:int, but:float, " + assert._toString(object));
     }
     break;
   case "int*":
     if (!(typeof object === "object" && object instanceof Int16Array)) {
-      throw new TypeError("require:int*, but:" + object);
+      throw new TypeError("require:int*, but:" + assert._toString(object));
     }
     break;
   case "long*":
     if (!(typeof object === "object" && object instanceof Int32Array)) {
-      throw new TypeError("require:int*, but:" + object);
+      throw new TypeError("require:int*, but:" + assert._toString(object));
     }
     break;
   case "float":
     if (typeof object !== "number") {
-      throw new TypeError("require:"+typename+", but:"+object);
+      throw new TypeError("require:"+typename+", but:" + assert._toString(object));
     }
     break;
   case "float*":
     if (!(typeof object === "object" && object instanceof Float32Array)) {
-      throw new TypeError("require:int*, but:" + object);
+      throw new TypeError("require:float*, but:" + assert._toString(object));
     }
     break;
   case "float***":
     if (!Array.isArray(object)) {
-      throw new TypeError("require:float***, but:" + object);
+      throw new TypeError("require:float***, but:" + assert._toString(object));
     }
     break;
   case "void":
     if (typeof object !== "object") {
-      throw new TypeError("require:object, but:"+object);
+      throw new TypeError("require:object, but:" + assert._toString(object));
     }
     break;
   default:

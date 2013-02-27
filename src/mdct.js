@@ -181,7 +181,7 @@ function mdct_backward(init, _in, out) {
     oX[3]       = MULT_NORM (iX[4] * T[1] - iX[6]  * T[0]);
     iX          = pointer(iX,-8);
     T           = pointer(T,4);
-  }while(iX!==null);
+  }while(iX&&iX.byteOffset>=_in.byteOffset);
   
   iX            = pointer(_in,n2-8);
   oX            = pointer(out,n2+n4);
@@ -195,8 +195,8 @@ function mdct_backward(init, _in, out) {
     oX[3]       =  MULT_NORM (iX[0] * T[0] - iX[2] * T[1]);
     iX          = pointer(iX,-8);
     oX          = pointer(oX,4);
-  }while(iX!==null);
-
+  }while(iX&&iX.byteOffset>=_in.byteOffset);
+  
   mdct_butterflies(init,pointer(out,n2),n2);
   mdct_bitreverse(init,out);
   
@@ -226,7 +226,7 @@ function mdct_backward(init, _in, out) {
       oX2=pointer(oX2,4);
       iX    =   pointer(iX,8);
       T     =   pointer(T,8);
-    }while(iX.byteOffset<oX1.byteOffset);
+    }while(iX&&oX1&&iX.byteOffset<oX1.byteOffset);
     
     iX=pointer(out,n2+n4);
     oX1=pointer(out,n4);
@@ -242,7 +242,7 @@ function mdct_backward(init, _in, out) {
       oX2[3] = -(oX1[0] = iX[0]);
       
       oX2=pointer(oX2,4);
-    }while(oX2.byteOffset<iX.byteOffset);
+    }while(oX2&&iX&&oX2.byteOffset<iX.byteOffset);
     
     iX=pointer(out,n2+n4);
     oX1=pointer(out,n2+n4);
@@ -254,7 +254,7 @@ function mdct_backward(init, _in, out) {
       oX1[2]= iX[1];
       oX1[3]= iX[0];
       iX=pointer(iX,4);
-    }while(oX1.byteOffset>oX2.byteOffset);
+    }while(oX1&&oX1.byteOffset>oX2.byteOffset);
   }
 }
 

@@ -310,7 +310,61 @@ function mdct_clear(l) {
 }
 
 function mdct_bitreverse(init, x) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(init, "mdct_lookup");
+  assert.instanceOf(x, "float*");
+  
+  var n       = init.n;
+  var bit     = init.bitrev;
+  var w0      = x;
+  var w1      = (x = pointer(w0,(n>>1)));
+  var T       = pointer(init.trig,n);
+  var x0,x1,r0,r1,r2,r3;
+  
+  assert.instanceOf(n, "int");
+  assert.instanceOf(bit, "int*");
+  assert.instanceOf(w0, "float*");
+  assert.instanceOf(w1, "float*");
+  assert.instanceOf(T, "float*");
+  
+  do{
+    x0 = pointer(x,bit[0]);
+    x1 = pointer(x,bit[1]);
+    
+              r0     = x0[1]  - x1[1];
+              r1     = x0[0]  + x1[0];
+              r2     = MULT_NORM(r1     * T[0]   + r0 * T[1]);
+              r3     = MULT_NORM(r1     * T[1]   - r0 * T[0]);
+    
+              w1     = pointer(w1,-4);
+
+              r0     = HALVE(x0[1] + x1[1]);
+              r1     = HALVE(x0[0] - x1[0]);
+
+              w0[0]  = r0     + r2;
+              w1[2]  = r0     - r2;
+              w0[1]  = r1     + r3;
+              w1[3]  = r3     - r1;
+
+              x0     = pointer(x,bit[2]);
+              x1     = pointer(x,bit[3]);
+
+              r0     = x0[1]  - x1[1];
+              r1     = x0[0]  + x1[0];
+              r2     = MULT_NORM(r1     * T[2]   + r0 * T[3]);
+              r3     = MULT_NORM(r1     * T[3]   - r0 * T[2]);
+
+              r0     = HALVE(x0[1] + x1[1]);
+              r1     = HALVE(x0[0] - x1[0]);
+
+              w0[2]  = r0     + r2;
+              w1[0]  = r0     - r2;
+              w0[3]  = r1     + r3;
+              w1[1]  = r3     - r1;
+
+              T     = pointer(T,4);
+              bit   = pointer(bit,4);
+              w0    = pointer(w0,4);
+  }while(w0&&w1&&w0.byteOffset<w1.byteOffset);
 }
 
 function mdct_backward(init, _in, out) {

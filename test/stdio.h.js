@@ -57,8 +57,8 @@ function fread(buf, size, n, fp) {
 global.fread = fread;
 
 function pointer(src, offset, length) {
-  offset = (src.byteOffset + offset) * src.constructor.BYTES_PER_ELEMENT;
-  if (length) {
+  offset = (src.byteOffset + offset * src.BYTES_PER_ELEMENT);
+  if (typeof length === "number") {
     return new src.constructor(src.buffer, offset, length);
   } else {
     return new src.constructor(src.buffer, offset);

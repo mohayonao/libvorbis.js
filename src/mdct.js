@@ -64,7 +64,67 @@ function mdct_butterfly_16(x) {
 
 /* 32 point butterfly (in place, 4 register) */
 function mdct_butterfly_32(x) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(x, "float*");
+  
+  var r0          = x[30] - x[14];
+  var r1          = x[31] - x[15];
+
+           x[30] +=         x[14];
+           x[31] +=         x[15];
+           x[14]  =         r0;
+           x[15]  =         r1;
+
+           r0     = x[28] - x[12];
+           r1     = x[29] - x[13];
+           x[28] +=         x[12];
+           x[29] +=         x[13];
+           x[12]  = MULT_NORM( r0 * cPI1_8  -  r1 * cPI3_8 );
+           x[13]  = MULT_NORM( r0 * cPI3_8  +  r1 * cPI1_8 );
+
+           r0     = x[26] - x[10];
+           r1     = x[27] - x[11];
+           x[26] +=         x[10];
+           x[27] +=         x[11];
+           x[10]  = MULT_NORM(( r0  - r1 ) * cPI2_8);
+           x[11]  = MULT_NORM(( r0  + r1 ) * cPI2_8);
+
+           r0     = x[24] - x[8];
+           r1     = x[25] - x[9];
+           x[24] += x[8];
+           x[25] += x[9];
+           x[8]   = MULT_NORM( r0 * cPI3_8  -  r1 * cPI1_8 );
+           x[9]   = MULT_NORM( r1 * cPI3_8  +  r0 * cPI1_8 );
+
+           r0     = x[22] - x[6];
+           r1     = x[7]  - x[23];
+           x[22] += x[6];
+           x[23] += x[7];
+           x[6]   = r1;
+           x[7]   = r0;
+
+           r0     = x[4]  - x[20];
+           r1     = x[5]  - x[21];
+           x[20] += x[4];
+           x[21] += x[5];
+           x[4]   = MULT_NORM( r1 * cPI1_8  +  r0 * cPI3_8 );
+           x[5]   = MULT_NORM( r1 * cPI3_8  -  r0 * cPI1_8 );
+
+           r0     = x[2]  - x[18];
+           r1     = x[3]  - x[19];
+           x[18] += x[2];
+           x[19] += x[3];
+           x[2]   = MULT_NORM(( r1  + r0 ) * cPI2_8);
+           x[3]   = MULT_NORM(( r1  - r0 ) * cPI2_8);
+
+           r0     = x[0]  - x[16];
+           r1     = x[1]  - x[17];
+           x[16] += x[0];
+           x[17] += x[1];
+           x[0]   = MULT_NORM( r1 * cPI3_8  +  r0 * cPI1_8 );
+           x[1]   = MULT_NORM( r1 * cPI1_8  -  r0 * cPI3_8 );
+
+           mdct_butterfly_16(x);
+           mdct_butterfly_16(x+16);
 }
 
 /* N point first stage butterfly (in place, 2 register) */

@@ -78,7 +78,27 @@ function mdct_butterfly_generic(T, x, points, trigint) {
 }
 
 function mdct_butterflies(init, x, points) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(init, "mdct_lookup");
+  assert.instanceOf(x   , "float*");
+  assert.instanceOf(points, "int");
+  
+  var T=init.trig;
+  var stages=init.log2n-5;
+  var i,j;
+  
+  assert.instanceOf(T, "float*");
+  
+  if(--stages>0){
+    mdct_butterfly_first(T,x,points);
+  }
+
+  for(i=1;--stages>0;i++){
+    for(j=0;j<(1<<i);j++)
+      mdct_butterfly_generic(T,x[(points>>i)*j],points>>i,4<<i);
+  }
+  
+  for(j=0;j<points;j+=32)
+    mdct_butterfly_32(x[j]);
 }
 
 function mdct_clear(l) {

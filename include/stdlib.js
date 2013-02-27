@@ -41,6 +41,11 @@ assert.instanceOf = function(object, typename) {
       throw new TypeError("require:int*, but:" + object);
     }
     break;
+  case "float***":
+    if (!Array.isArray(object)) {
+      throw new TypeError("require:float***, but:" + object);
+    }
+    break;
   case "void":
     if (typeof object !== "object") {
       throw new TypeError("require:object, but:"+object);

@@ -67,26 +67,28 @@ function vorbis_block_init(v, vb) {
 function _vorbis_block_alloc(vb, size, type) {
   assert.instanceOf(vb, "vorbis_block");
   
-  var ret,link;
-  if(size+vb.localtop>vb.localalloc){
-    /* can't just _ogg_realloc... there are outstanding pointers */
-    if(vb.localstore){
-      link=struct_alloc_chain();
-      vb.totaluse+=vb.localtop;
-      link.next=vb.reap;
-      link.ptr=vb.localstore;
-      vb.reap=link;
-    }
-    /* highly conservative */
-    vb.localalloc=size;
-    vb.localstore=calloc(vb.localalloc,type);
-    vb.localtop=0;
-  }
-  {
-    ret=pointer(vb.localstore,vb.localtop);
-    vb.localtop+=size;
-    return ret;
-  }
+  return calloc(size, type);
+
+  // var ret,link;
+  // if(size+vb.localtop>vb.localalloc){
+  //   /* can't just _ogg_realloc... there are outstanding pointers */
+  //   if(vb.localstore){
+  //     link=struct_alloc_chain();
+  //     vb.totaluse+=vb.localtop;
+  //     link.next=vb.reap;
+  //     link.ptr=vb.localstore;
+  //     vb.reap=link;
+  //   }
+  //   /* highly conservative */
+  //   vb.localalloc=size;
+  //   vb.localstore=calloc(vb.localalloc,type);
+  //   vb.localtop=0;
+  // }
+  // {
+  //   ret=pointer(vb.localstore,vb.localtop);
+  //   vb.localtop+=size;
+  //   return ret;
+  // }
 }
 
 /* reap the chain, pull the ripcord */

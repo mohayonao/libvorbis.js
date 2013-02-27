@@ -530,7 +530,23 @@ function vorbis_synthesis_blockin(v, vb) {
 
 /* pcm==NULL indicates we just want the pending samples, no more */
 function vorbis_synthesis_pcmout(v, pcm){
-  NOT_IMPLEMENTED();
+  assert.instanceOf(v, "vorbis_dsp_state");
+  assert.instanceOf(pcm, "float***");
+  
+  var vi=v.vi;
+  var i;
+  
+  assert.instanceOf(vi, "vorbis_info");
+
+  if(v.pcm_returned>-1 && v.pcm_returned<v.pcm_current){
+    if(pcm){
+      for(i=0;i<vi.channels;i++)
+        v.pcmret[i]=v.pcm[i]+v.pcm_returned;
+      pcm[0]=v.pcmret;
+    }
+    return(v.pcm_current-v.pcm_returned);
+  }
+  return(0);
 }
 
 function vorbis_synthesis_read(v, n) {

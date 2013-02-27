@@ -200,7 +200,64 @@ function _01forward(opb, vb, vl, _in, ch, partword, encode, submap) {
 
 /* a truncated packet here just means 'stop working'; it's not an error */
 function _01inverse(vb, vl, _in, ch, decodepart) {
-  NOT_IMPLEMENTED();
+  var i,j,k,l,s;
+  var look=vl;
+  var info=look.info;
+  
+  /* move all this setup out later */
+  var samples_per_partition=info.grouping;
+  var partitions_per_word=look.phrasebook.dim;
+  var max=vb.pcmend>>1;
+  var end=(info.end<max?info.end:max);
+  var n=end-info.begin;
+  var partvals,partwords,partword,temp,offset,stagebook;
+  
+  err_out:while(1){
+    if(n>0){
+      partvals=int(n/samples_per_partition);
+      partwords=int((partvals+partitions_per_word-1)/partitions_per_word);
+      partword=calloc(ch,[]);
+      
+      for(j=0;j<ch;j++)
+        partword[j]=_vorbis_block_alloc(vb,partwords,[]);
+      
+      for(s=0;s<look.stages;s++){
+
+        /* each loop decodes on partition codeword containing
+           partitions_per_word partitions */
+        for(i=0,l=0;i<partvals;l++){
+          if(s===0){
+            /* fetch the partition word for each channel */
+            for(j=0;j<ch;j++){
+              temp=vorbis_book_decode(look.phrasebook,vb.opb);
+              
+              if(temp===-1 || temp>=info.partvals)break err_out; // eopbreak;
+              partword[j][l]=look.decodemap[temp];
+              if(partword[j][l]===NULL)break err_out; // errout;
+            }
+          }
+
+          /* now we decode residual values for the partitions */
+          for(k=0;k<partitions_per_word && i<partvals;k++,i++)
+            for(j=0;j<ch;j++){
+              offset=info.begin+i*samples_per_partition;
+              if(info.secondstages[partword[j][l][k]]&(1<<s)){
+                stagebook=look.partbooks[partword[j][l][k]][s];
+                if(stagebook){
+                  if(decodepart(stagebook,pointer(_in[j],offset),vb.opb,
+                                samples_per_partition)===-1)break; // eopbreak;
+                }
+              }
+            }
+        }
+      }
+    }
+    break;
+  }
+  
+  // errout:
+  // eopbreak:
+  return(0);
 }
 
 function res0_inverse(vb, vl, _in, nonzero, ch) {

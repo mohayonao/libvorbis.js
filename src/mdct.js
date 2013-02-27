@@ -91,7 +91,7 @@ function mdct_butterfly_16(x) {
            x[7]  = r1;
 
            mdct_butterfly_8(x);
-           mdct_butterfly_8(x+8);
+           mdct_butterfly_8(pointer(x,8));
 }
 
 /* 32 point butterfly (in place, 4 register) */
@@ -156,7 +156,7 @@ function mdct_butterfly_32(x) {
            x[1]   = MULT_NORM( r1 * cPI1_8  -  r0 * cPI3_8 );
 
            mdct_butterfly_16(x);
-           mdct_butterfly_16(x+16);
+           mdct_butterfly_16(pointer(x,16));
 }
 
 /* N point first stage butterfly (in place, 2 register) */

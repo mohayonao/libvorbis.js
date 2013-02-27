@@ -313,7 +313,39 @@ var FLOOR1_fromdB_LOOKUP = new Float32Array([
 ]);
 
 function render_line(n, x0, x1, y0, y1, d) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(n , "int");
+  assert.instanceOf(x0, "int");
+  assert.instanceOf(x1, "int");
+  assert.instanceOf(y0, "int");
+  assert.instanceOf(y1, "int");
+  assert.instanceOf(d , "float*");
+  
+  var dy=y1-y0;
+  var adx=x1-x0;
+  var ady=Math.abs(dy);
+  var base=dy/adx;
+  var sy=(dy<0?base-1:base+1);
+  var x=x0;
+  var y=y0;
+  var err=0;
+  
+  ady-=Math.abs(base*adx);
+
+  if(n>x1)n=x1;
+
+  if(x<n)
+    d[x]*=FLOOR1_fromdB_LOOKUP[y];
+
+  while(++x<n){
+    err=err+ady;
+    if(err>=adx){
+      err-=adx;
+      y+=sy;
+    }else{
+      y+=base;
+    }
+    d[x]*=FLOOR1_fromdB_LOOKUP[y];
+  }
 }
 
 function render_line0(n, x0, x1, y0, y1, d) {

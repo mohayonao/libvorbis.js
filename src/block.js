@@ -388,7 +388,7 @@ function vorbis_synthesis_blockin(v, vb) {
           /* small/large */
           w=_vorbis_window_get(b.window[0]-hs);
           pcm=pointer(v.pcm[j],prevCenter);
-          p=vb.pcm[j]+n1/2-n0/2;
+          p=pointer(vb.pcm[j],n1/2-n0/2);
           for(i=0;i<n0;i++)
             pcm[i]=pcm[i]*w[n0-i-1] +p[i]*w[i];
           for(;i<n1/2+n0/2;i++)
@@ -406,7 +406,7 @@ function vorbis_synthesis_blockin(v, vb) {
       /* the copy section */
       {
         pcm=pointer(v.pcm[j],thisCenter);
-        p=vb.pcm[j]+n;
+        p=pointer(vb.pcm[j],n);
         for(i=0;i<n;i++)
           pcm[i]=p[i];
       }
@@ -541,7 +541,7 @@ function vorbis_synthesis_pcmout(v, pcm){
   if(v.pcm_returned>-1 && v.pcm_returned<v.pcm_current){
     if(pcm){
       for(i=0;i<vi.channels;i++)
-        v.pcmret[i]=v.pcm[i]+v.pcm_returned;
+        v.pcmret[i]=pointer(v.pcm[i],v.pcm_returned);
       pcm[0]=v.pcmret;
     }
     return(v.pcm_current-v.pcm_returned);

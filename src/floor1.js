@@ -424,7 +424,45 @@ function floor1_inverse1(vb, _in) {
 }
 
 function floor1_inverse2(vb, _in,memo, out) {
-  NOT_IMPLEMENTED();
+  var look=_in;
+  var info=look.vi;
+  
+  var ci=vb.vd.vi.codec_setup;
+  var n=ci.blocksizes[vb.W]>>1;
+  var j;
+  var fit_value,hx,lx,ly,current,hy;
+  
+  if(memo){
+    /* render the lines */
+    fit_value=pointer(memo,0);
+    hx=0;
+    lx=0;
+    ly=fit_value[0]*info.mult;
+    /* guard lookup against out-of-range values */
+    ly=(ly<0?0:ly>255?255:ly);
+
+    for(j=1;j<look.posts;j++){
+      current=look.forward_index[j];
+      hy=fit_value[current]&0x7fff;
+      if(hy===fit_value[current]){
+
+        hx=info.postlist[current];
+        hy*=info.mult;
+        /* guard lookup against out-of-range values */
+        hy=(hy<0?0:hy>255?255:hy);
+
+        render_line(n,lx,hx,ly,hy,out);
+
+        lx=hx;
+        ly=hy;
+      }
+    }
+    for(j=hx;j<n;j++)out[j]*=FLOOR1_fromdB_LOOKUP[ly]; /* be certain */
+    return(1);
+  }
+  j=out.length;
+  while(j--)out[j]=0;
+  return(0);
 }
 
 /* export hooks */

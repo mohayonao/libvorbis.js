@@ -58,6 +58,8 @@ function int(x) {
   return x|0;
 }
 
+var OUT_OF_RANGE_STATE = 0;
+
 function pointer(src, offset, length) {
   if (Array.isArray(src)) {
     if (offset >= 0) {
@@ -65,14 +67,18 @@ function pointer(src, offset, length) {
     }
     throw new Error("Ops.. Array["+offset+"]..");
   } else {
-    offset = (src.byteOffset + offset) * src.constructor.BYTES_PER_ELEMENT;
-    assert.isNotNaN(offset);
+    offset = (src.byteOffset + offset * src.BYTES_PER_ELEMENT);
+    assert.isNotNaN(offset)
+    
+    if (offset < 0) {
+      OUT_OF_RANGE_STATE = 1;
+      return null;
+    }
     
     if (typeof length === "number") {
-      return new src.constructor(src.buffer, offset, length);
-    } else {
-      return new src.constructor(src.buffer, offset);
-    }
+      return new src.constructor(src.buffer, offset, length);  
+    } 
+    return new src.constructor(src.buffer, offset);    
   }
 }
 

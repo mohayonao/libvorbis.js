@@ -136,7 +136,7 @@ function mdct_butterflies(init, x, points) {
 
   for(i=1;--stages>0;i++){
     for(j=0;j<(1<<i);j++)
-      mdct_butterfly_generic(T,x[(points>>i)*j],points>>i,4<<i);
+      mdct_butterfly_generic(T,pointer(x,(points>>i)*j),points>>i,4<<i);
   }
   
   for(j=0;j<points;j+=32)

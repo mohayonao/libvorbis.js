@@ -90,7 +90,110 @@ function mdct_bitreverse(init, x) {
 }
 
 function mdct_backward(init, _in, out) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(init, "mdct_lookup");
+  assert.instanceOf(_in , "float*");
+  assert.instanceOf(out , "float*");
+  
+  var n=init.n;
+  var n2=n>>1;
+  var n4=n>>2;
+  var iX,oX,T,oX1,oX2;
+  
+  assert.instanceOf(n, "int");
+  
+  /* rotate */
+
+  iX = pointer(_in,n2-7);
+  oX = pointer(out,n2+n4);
+  T  = pointer(init.trig,n4);
+
+  assert.instanceOf(iX, "float*");
+  assert.instanceOf(oX, "float*");
+  assert.instanceOf(T , "float*");
+  
+  do{
+    oX          = pointer(oX,-4);
+    oX[0]       = MULT_NORM(-iX[2] * T[3] - iX[0]  * T[2]);
+    oX[1]       = MULT_NORM (iX[0] * T[3] - iX[2]  * T[2]);
+    oX[2]       = MULT_NORM(-iX[6] * T[1] - iX[4]  * T[0]);
+    oX[3]       = MULT_NORM (iX[4] * T[1] - iX[6]  * T[0]);
+    iX          = pointer(iX,-8);
+    T           = pointer(T,4);
+  }while(iX!==null);
+  
+  iX            = pointer(_in,n2-8);
+  oX            = pointer(out,n2+n4);
+  T             = pointer(init.trig,n4);
+  
+  do{
+    T           = pointer(T,-4);
+    oX[0]       =  MULT_NORM (iX[4] * T[3] + iX[6] * T[2]);
+    oX[1]       =  MULT_NORM (iX[4] * T[2] - iX[6] * T[3]);
+    oX[2]       =  MULT_NORM (iX[0] * T[1] + iX[2] * T[0]);
+    oX[3]       =  MULT_NORM (iX[0] * T[0] - iX[2] * T[1]);
+    iX          = pointer(iX,-8);
+    oX          = pointer(oX,4);
+  }while(iX!==null);
+
+  mdct_butterflies(init,pointer(out,n2),n2);
+  mdct_bitreverse(init,out);
+  
+  /* roatate + window */
+
+  {
+    oX1=pointer(out,n2+n4);
+    oX2=pointer(out,n2+n4);
+    iX =pointer(out,0);
+    T  =pointer(init.trig,n2);
+    
+    do{
+      oX1=pointer(oX1,-4);
+
+      oX1[3]  =  MULT_NORM (iX[0] * T[1] - iX[1] * T[0]);
+      oX2[0]  = -MULT_NORM (iX[0] * T[0] + iX[1] * T[1]);
+
+      oX1[2]  =  MULT_NORM (iX[2] * T[3] - iX[3] * T[2]);
+      oX2[1]  = -MULT_NORM (iX[2] * T[2] + iX[3] * T[3]);
+
+      oX1[1]  =  MULT_NORM (iX[4] * T[5] - iX[5] * T[4]);
+      oX2[2]  = -MULT_NORM (iX[4] * T[4] + iX[5] * T[5]);
+
+      oX1[0]  =  MULT_NORM (iX[6] * T[7] - iX[7] * T[6]);
+      oX2[3]  = -MULT_NORM (iX[6] * T[6] + iX[7] * T[7]);
+
+      oX2=pointer(oX2,4);
+      iX    =   pointer(iX,8);
+      T     =   pointer(T,8);
+    }while(iX.byteOffset<oX1.byteOffset);
+    
+    iX=pointer(out,n2+n4);
+    oX1=pointer(out,n4);
+    oX2=oX1;
+    
+    do{
+      oX1=pointer(oX1,-4);
+      iX=pointer(iX,-4);
+      
+      oX2[0] = -(oX1[3] = iX[3]);
+      oX2[1] = -(oX1[2] = iX[2]);
+      oX2[2] = -(oX1[1] = iX[1]);
+      oX2[3] = -(oX1[0] = iX[0]);
+      
+      oX2=pointer(oX2,4);
+    }while(oX2.byteOffset<iX.byteOffset);
+    
+    iX=pointer(out,n2+n4);
+    oX1=pointer(out,n2+n4);
+    oX2=pointer(out,n2);
+    do{
+      oX1=pointer(oX1,-4);
+      oX1[0]= iX[3];
+      oX1[1]= iX[2];
+      oX1[2]= iX[1];
+      oX1[3]= iX[0];
+      iX=pointer(iX,4);
+    }while(oX1.byteOffset>oX2.byteOffset);
+  }
 }
 
 function mdct_forward(init, _in, out) {

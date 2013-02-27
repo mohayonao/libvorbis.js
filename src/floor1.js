@@ -56,9 +56,14 @@ function floor1_pack(i, opb) {
 }
 
 function floor1_unpack(vi, opb) {
+  assert.instanceOf(vi , "vorbis_info");
+  assert.instanceOf(opb, "oggpack_buffer");
+  
   var ci=vi.codec_setup;
   var j,k,count=0,maxclass=-1,rangebits;
   var t,sortpointer;
+  
+  assert.instanceOf(ci, "codec_setup_info");
   
   var info=vorbis_info_floor1();
   
@@ -129,12 +134,17 @@ function floor1_unpack(vi, opb) {
 }
 
 function floor1_look(vd, _in) {
+  assert.instanceOf(vd , "vorbis_dsp_state");
+  assert.instanceOf(_in, "void");
   
   var sortpointer=calloc(VIF_POSIT+2,[]);
   var info=_in;
   var look=vorbis_look_floor1();
   var i,j,n=0;
   var lo,hi,lx,hx,currentx,x,index;
+
+  assert.instanceOf(info, "vorbis_info_floor1");
+  assert.instanceOf(look, "vorbis_look_floor1");
   
   look.vi=info;
   look.n=info.postlist[1];
@@ -210,6 +220,12 @@ function floor1_look(vd, _in) {
 }
 
 function render_point(x0, x1, y0, y1, x) {
+  assert.instanceOf(x0, "int");
+  assert.instanceOf(x1, "int");
+  assert.instanceOf(y0, "int");
+  assert.instanceOf(y1, "int");
+  assert.instanceOf(x , "int");
+  
   y0&=0x7fff; /* mask off flag */
   y1&=0x7fff;
   
@@ -334,6 +350,9 @@ function floor1_encode(opb, vb, look, post, ilogmask) {
 }
 
 function floor1_inverse1(vb, _in) {
+  assert.instanceOf(vb , "vorbis_block");
+  assert.instanceOf(_in, "void");
+  
   var look=_in;
   var info=look.vi;
   var ci=vb.vd.vi.codec_setup;
@@ -424,6 +443,11 @@ function floor1_inverse1(vb, _in) {
 }
 
 function floor1_inverse2(vb, _in,memo, out) {
+  assert.instanceOf(vb , "vorbis_block");
+  assert.instanceOf(_in, "void");
+  assert.instanceOf(memo, "int*");
+  assert.instanceOf(out , "float*");
+  
   var look=_in;
   var info=look.vi;
   
@@ -431,6 +455,10 @@ function floor1_inverse2(vb, _in,memo, out) {
   var n=ci.blocksizes[vb.W]>>1;
   var j;
   var fit_value,hx,lx,ly,current,hy;
+  
+  assert.instanceOf(look, "vorbis_look_floor1");
+  assert.instanceOf(info, "vorbis_info_floor1");
+  assert.instanceOf(ci  , "codec_setup_info");
   
   if(memo){
     /* render the lines */

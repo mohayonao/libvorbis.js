@@ -17,10 +17,15 @@ function mapping0_pack(vi, vm, opb) {
 
 /* also responsible for range checking */
 function mapping0_unpack(vi, opb) {
+  assert.instanceOf(vi , "vorbis_info");
+  assert.instanceOf(opb, "oggpack_buffer");
+  
   var i,b;
   var info=vorbis_info_mapping0();
   var ci=vi.codec_setup;
   var testM,testA;
+  
+  assert.instanceOf(ci, "codec_setup_info");
   
   err_out:while(1){
     b=oggpack_read(opb,1);
@@ -77,11 +82,20 @@ function mapping0_forward(vb){
 }
 
 function mapping0_inverse(vb, l) {
+  assert.instanceOf(vb, "vorbis_block");
+  assert.instanceOf(l , "vorbis_info_mapping0");
+  
   var vd=vb.vd;
   var vi=vd.vi;
   var ci=vi.codec_setup;
   var b=vd.backend_state;
   var info=l;
+
+  assert.instanceOf(vd, "vorbis_dsp_state");
+  assert.instanceOf(vi, "vorbis_info");
+  assert.instanceOf(ci, "codec_setup_info");
+  assert.instanceOf(b , "private_state");
+  assert.instanceOf(info, "vorbis_info_mapping0");
   
   var i,j;
   var n=vb.pcmend=ci.blocksizes[vb.W];

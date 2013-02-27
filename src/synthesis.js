@@ -1,14 +1,23 @@
 function vorbis_synthesis(vb, op) {
+  assert.instanceOf(vb, "vorbis_block");
+  assert.instanceOf(op, "ogg_packet");
+  
   var vd= vb ? vb.vd : 0;
   var b= vd ? vd.backend_state : 0;
   var vi= vd ? vd.vi : 0;
   var ci= vi ? vi.codec_setup : 0;
   var opb=vb ? vb.opb : 0;
   var type,mode,i;
-  
+
   if (!vd || !b || !vi || !ci || !opb) {
     return OV_EBADPACKET;
   }
+
+  assert.instanceOf(vd , "vorbis_dsp_state");
+  assert.instanceOf(b  , "private_state");
+  assert.instanceOf(vi , "vorbis_info");
+  assert.instanceOf(ci , "codec_setup_info");
+  assert.instanceOf(opb, "oggpack_buffer");
   
   /* first things first.  Make sure decode is ready */
   _vorbis_block_ripcord(vb);

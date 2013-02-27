@@ -7,9 +7,13 @@ function vorbis_staticbook_pack(c, opb) {
 /* unpacks a codebook from the packet buffer into the codebook struct,
    readies the codebook auxiliary structures for decode *************/
 function vorbis_staticbook_unpack(opb) {
+  assert.instanceOf(opb, "oggpack_buffer");
+  
   var i,j,unused,num,length,quantvals;
   var s=static_codebook();
   s.allocedp=1;
+  
+  assert.instanceOf(s  , "static_codebook");
   
   err_out:while(1){
     /* make sure alignment is correct */
@@ -133,6 +137,9 @@ function vorbis_book_encode(book, a, b) {
 }
 
 function decode_packed_entry_number(book, b) {
+  assert.instanceOf(book, "codebook");
+  assert.instanceOf(b   , "oggpack_buffer");
+  
   var read=book.dec_maxlength;
   var lo,hi;
   var lok = oggpack_look(b,book.dec_firsttablen);
@@ -196,6 +203,9 @@ function decode_packed_entry_number(book, b) {
 
 /* returns the [original, not compacted] entry number or -1 on eof *********/
 function vorbis_book_decode(book, b) {
+  assert.instanceOf(book, "codebook");
+  assert.instanceOf(b   , "oggpack_buffer");
+  
   var packed_entry;
   if(book.used_entries>0){
     packed_entry=decode_packed_entry_number(book,b);

@@ -40,6 +40,9 @@
 var WORD_ALIGN = 8;
 
 function vorbis_block_init(v, vb) {
+  assert.instanceOf(v , "vorbis_dsp_state");
+  assert.instanceOf(vb, "vorbis_block");
+  
   var i,vbi;
   vorbis_block(vb);
   vb.vd=v;
@@ -62,6 +65,8 @@ function vorbis_block_init(v, vb) {
 }
 
 function _vorbis_block_alloc(vb, size, type) {
+  assert.instanceOf(vb, "vorbis_block");
+  
   var ret,link;
   if(size+vb.localtop>vb.localalloc){
     /* can't just _ogg_realloc... there are outstanding pointers */
@@ -86,6 +91,8 @@ function _vorbis_block_alloc(vb, size, type) {
 
 /* reap the chain, pull the ripcord */
 function _vorbis_block_ripcord(vb) {
+  assert.instanceOf(vb, "vorbis_block");
+  
   /* reap the chain */
   var reap=vb.reap;
   var next;
@@ -114,6 +121,10 @@ function vorbis_block_clear(vb) {
    here and not in analysis.c (which is for analysis transforms only).
    The init is here because some of it is shared */
 function _vds_shared_init(v, vi, encp) {
+  assert.instanceOf(v   , "vorbis_dsp_state");
+  assert.instanceOf(vi  , "vorbis_info");
+  assert.instanceOf(encp, "int");
+  
   var i;
   var ci=vi.codec_setup;
   var b=NULL;
@@ -232,6 +243,8 @@ function vorbis_analysis_init(v, vi) {
 }
 
 function vorbis_dsp_clear(v) {
+  assert.instanceOf(v, "vorbis_dsp_state");
+  
   if(v){
     vorbis_dsp_state(v);
   }
@@ -257,6 +270,8 @@ function vorbis_analysis_blockout(v, vb) {
 }
 
 function vorbis_synthesis_restart(v) {
+  assert.instanceOf(v, "vorbis_dsp_state");
+  
   var vi=v.vi;
   var ci;
   var hs;
@@ -266,6 +281,9 @@ function vorbis_synthesis_restart(v) {
   ci=vi.codec_setup;
   if(!ci)return -1;
   hs=ci.halfrate_flag;
+  
+  assert.instanceOf(vi, "vorbis_info");
+  assert.instanceOf(ci, "codec_setup_info");
   
   v.centerW=ci.blocksizes[1]>>(hs+1);
   v.pcm_current=v.centerW>>hs;
@@ -280,6 +298,9 @@ function vorbis_synthesis_restart(v) {
 }
 
 function vorbis_synthesis_init(v, vi) {
+  assert.instanceOf(v, "vorbis_dsp_state");
+  assert.instanceOf(vi, "vorbis_info");
+  
   if(_vds_shared_init(v,vi,0)){
     vorbis_dsp_clear(v);
     return 1;

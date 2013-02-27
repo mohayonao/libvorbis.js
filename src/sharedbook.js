@@ -2,6 +2,10 @@
    for length ordered or unordered, always assigns the lowest valued
    codewords first.  Extended to handle unused entries (length 0) */
 function _make_words(l, n, sparsecount) {
+  assert.instanceOf(l, "long*");
+  assert.instanceOf(n, "long");
+  assert.instanceOf(sparsecount, "long");
+  
   var i,j,count=0;
   var marker = calloc(33,uint32);
   var r=calloc((sparsecount?sparsecount:n),uint32);
@@ -90,6 +94,8 @@ function _make_words(l, n, sparsecount) {
    that's portable and totally safe against roundoff, but I haven't
    thought of it.  Therefore, we opt on the side of caution */
 function _book_maptype1_quantvals(b) {
+  assert.instanceOf(b, "static_codebook");
+  
   var vals=Math.floor(Math.pow(b.entries,1/b.dim));
   var acc,acc1,i;
   
@@ -123,6 +129,10 @@ function _book_maptype1_quantvals(b) {
    the values in the quant vector). in map type 2, all the values came
    in in an explicit list.  Both value lists must be unpacked */
 function _book_unquantize(b, n, sparsemap) {
+  assert.instanceOf(b, "static_codebook");
+  assert.instanceOf(n, "int");
+  assert.instanceOf(sparsemap, "int*");
+  
   var j,k,count=0;
   var quantvals,mindel,delta,r,last,indexdiv,index,val;
   if(b.maptype===1 || b.maptype===2){
@@ -186,12 +196,14 @@ function _book_unquantize(b, n, sparsemap) {
 }
 
 function vorbis_staticbook_destroy(b) {
+  assert.instanceOf(b, "static_codebook");
   if(b.allocedp){
     static_codebook(b);
   } /* otherwise, it is in static memory */
 }
 
 function vorbis_book_clear(b){
+  assert.instanceOf(b, "static_codebook");
   /* static book is not cleared; we're likely called on the lookup and
      the static codebook belongs to the info struct */
   codebook(b);
@@ -203,6 +215,9 @@ function vorbis_book_init_encode(c, s) {
 
 /* decode codebook arrangement is more heavily optimized than encode */
 function vorbis_book_init_decode(c, s) {
+  assert.instanceOf(c, "codebook");
+  assert.instanceOf(s, "static_codebook");
+  
   var i,j,n=0,tabn;
   var sortindex,codes,codep,position,orig,mask,hi,lo,word,loval,hival;
   codebook(c);

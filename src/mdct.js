@@ -8,6 +8,9 @@
    some window function algebra. */
 
 function mdct_init(lookup, n) {
+  assert.instanceOf(lookup, "mdct_lookup");
+  assert.instanceOf(n, "int");
+  
   var bitrev=calloc((n/4),int16);
   var T=calloc((n+n/4),float32);
   

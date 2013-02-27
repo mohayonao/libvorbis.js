@@ -37,6 +37,8 @@ function vorbis_comment_query_count(vc, tag) {
 }
 
 function vorbis_comment_clear(vc) {
+  assert.instanceOf(vc, "vorbis_comment");
+  
   if(vc){
     vorbis_comment(vc);
   }
@@ -50,19 +52,28 @@ function vorbis_info_blocksize(vi, zo) {
 
 /* used by synthesis, which has a full, alloced vi */
 function vorbis_info_init(vi) {
+  assert.instanceOf(vi, "vorbis_info");
+  
   vorbis_info(vi);
   vi.codec_setup=codec_setup_info();
 }
 
 function vorbis_info_clear(vi) {
+  assert.instanceOf(vi, "vorbis_info");
+  
   vorbis_info(vi);
 }
 
 /* Header packing/unpacking ********************************************/
 
 function _vorbis_unpack_info(vi, opb) {
+  assert.instanceOf(vi , "vorbis_info");
+  assert.instanceOf(opb, "oggpack_buffer");
+  
   var ci=vi.codec_setup;
   if(!ci)return(OV_EFAULT);
+
+  assert.instanceOf(ci, "codec_setup_info");
   
   vi.version=oggpack_read(opb,32);
   if(vi.version!==0)return(OV_EVERSION);
@@ -95,6 +106,9 @@ function _vorbis_unpack_info(vi, opb) {
 }
 
 function _vorbis_unpack_comment(vc, opb) {
+  assert.instanceOf(vc , "vorbis_comment");
+  assert.instanceOf(opb, "oggpack_buffer");
+  
   var i, len;
   var vendorlen=oggpack_read(opb,32);
   err_out:while(1){
@@ -128,9 +142,14 @@ function _vorbis_unpack_comment(vc, opb) {
 /* all of the real encoding details are here.  The modes, books,
    everything */
 function _vorbis_unpack_books(vi, opb) {
+  assert.instanceOf(vi , "vorbis_info");
+  assert.instanceOf(opb, "oggpack_buffer");
+  
   var ci=vi.codec_setup;
   var i,times,test;
   if(!ci)return(OV_EFAULT);
+  
+  assert.instanceOf(ci, "codec_setup_info");
   
   err_out:while(1){
     /* codebooks */
@@ -217,6 +236,10 @@ function vorbis_synthesis_idheader(op) {
    with bitstream comments and a third packet that holds the
    codebook. */
 function vorbis_synthesis_headerin(vi, vc, op) {
+  assert.instanceOf(vi, "vorbis_info");
+  assert.instanceOf(vc, "vorbis_comment");
+  assert.instanceOf(op, "ogg_packet");
+  
   var opb = oggpack_buffer();
   var buffer, packtype;
   

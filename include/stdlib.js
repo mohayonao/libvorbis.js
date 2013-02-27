@@ -3,6 +3,51 @@ var NULL = null;
 function NOP() {}
 function NOT_IMPLEMENTED() { throw new Error("not implemented."); }
 
+var assert = {};
+assert.instanceOf = function(object, typename) {
+  switch (typename) {
+  case "int":
+  case "long":
+    if (typeof object !== "number") {
+      throw new TypeError("require:"+typename+", but:"+object);
+    }
+    if (int(object) !== object) {
+      throw new TypeError("require:int, but:float, " + object);
+    }
+    break;
+  case "int*":
+    if (object && ! object instanceof Int16Array) {
+      throw new TypeError("require:int*, but:" + object);
+    }
+    break;
+  case "long*":
+    if (object && ! object instanceof Int32Array) {
+      throw new TypeError("require:int*, but:" + object);
+    }
+    break;
+  case "float":
+    if (typeof object !== "number") {
+      throw new TypeError("require:"+typename+", but:"+object);
+    }
+    break;
+  case "float*":
+    if (object && ! object instanceof Float32Array) {
+      throw new TypeError("require:int*, but:" + object);
+    }
+    break;
+  case "void":
+    if (typeof object !== "object") {
+      throw new TypeError("require:object, but:"+object);
+    }
+    break;
+  default:
+    if (object.__name !== typename) {
+      throw new TypeError("require:"+typename+", but:"+object.__name);
+    }
+  }
+  return 0;
+};
+
 function int(x) {
   return x|0;
 }

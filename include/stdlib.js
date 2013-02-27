@@ -151,6 +151,7 @@ function realloc(src, newSize) {
     for (i = src.length; i < newSize; i++) {
       src[i] = null;
     }
+    return src;
   } else {
     ret = new src.constructor(newSize);
     ret.set(src);

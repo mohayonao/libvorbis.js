@@ -210,7 +210,19 @@ function floor1_look(vd, _in) {
 }
 
 function render_point(x0, x1, y0, y1, x) {
-  NOT_IMPLEMENTED();
+  y0&=0x7fff; /* mask off flag */
+  y1&=0x7fff;
+  
+  {
+    var dy=y1-y0;
+    var adx=x1-x0;
+    var ady=Math.abs(dy);
+    var err=ady*(x-x0);
+      
+    var off=err/adx;
+    if(dy<0)return(y0-off);
+    return(y0+off);
+  }
 }
 
 function vorbis_dBquant(x) {

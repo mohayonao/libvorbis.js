@@ -116,7 +116,57 @@ function mdct_butterfly_first(T, x, points) {
 
 /* N/stage point generic N stage butterfly (in place, 2 register) */
 function mdct_butterfly_generic(T, x, points, trigint) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(T, "float*");
+  assert.instanceOf(x, "float*");
+  assert.instanceOf(points, "int");
+  assert.instanceOf(trigint, "int");
+  
+  var x1 = pointer(x, points      - 8);
+  var x2 = pointer(x, (points>>1) - 8);
+  var r0;
+  var r1;
+  
+  do{
+
+               r0      = x1[6]      -  x2[6];
+               r1      = x1[7]      -  x2[7];
+               x1[6]  += x2[6];
+               x1[7]  += x2[7];
+               x2[6]   = MULT_NORM(r1 * T[1]  +  r0 * T[0]);
+               x2[7]   = MULT_NORM(r1 * T[0]  -  r0 * T[1]);
+    
+               T=pointer(T,trigint);
+    
+               r0      = x1[4]      -  x2[4];
+               r1      = x1[5]      -  x2[5];
+               x1[4]  += x2[4];
+               x1[5]  += x2[5];
+               x2[4]   = MULT_NORM(r1 * T[1]  +  r0 * T[0]);
+               x2[5]   = MULT_NORM(r1 * T[0]  -  r0 * T[1]);
+    
+               T=pointer(T,trigint);
+    
+               r0      = x1[2]      -  x2[2];
+               r1      = x1[3]      -  x2[3];
+               x1[2]  += x2[2];
+               x1[3]  += x2[3];
+               x2[2]   = MULT_NORM(r1 * T[1]  +  r0 * T[0]);
+               x2[3]   = MULT_NORM(r1 * T[0]  -  r0 * T[1]);
+
+               T=pointer(T,trigint);
+    
+               r0      = x1[0]      -  x2[0];
+               r1      = x1[1]      -  x2[1];
+               x1[0]  += x2[0];
+               x1[1]  += x2[1];
+               x2[0]   = MULT_NORM(r1 * T[1]  +  r0 * T[0]);
+               x2[1]   = MULT_NORM(r1 * T[0]  -  r0 * T[1]);
+
+               T=pointer(T,trigint);
+    x1=pointer(x1,-8);
+    x2=pointer(x2,-8);
+
+  }while(x2&&x2.byteOffset>=x.byteOffset);
 }
 
 function mdct_butterflies(init, x, points) {

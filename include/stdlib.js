@@ -22,12 +22,12 @@ assert.instanceOf = function(object, typename) {
     }
     break;
   case "int*":
-    if (object && ! object instanceof Int16Array) {
+    if (!(typeof object === "object" && object instanceof Int16Array)) {
       throw new TypeError("require:int*, but:" + object);
     }
     break;
   case "long*":
-    if (object && ! object instanceof Int32Array) {
+    if (!(typeof object === "object" && object instanceof Int32Array)) {
       throw new TypeError("require:int*, but:" + object);
     }
     break;
@@ -37,7 +37,7 @@ assert.instanceOf = function(object, typename) {
     }
     break;
   case "float*":
-    if (object && ! object instanceof Float32Array) {
+    if (!(typeof object === "object" && object instanceof Float32Array)) {
       throw new TypeError("require:int*, but:" + object);
     }
     break;

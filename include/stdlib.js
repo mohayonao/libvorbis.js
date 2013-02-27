@@ -142,9 +142,16 @@ function calloc(n, size) {
 }
 
 function realloc(src, newSize) {
-  var ret = new src.constructor(newSize);
-  ret.set(src);
-  return ret;
+  var ret, i;
+  if (Array.isArray(src)) {
+    for (i = src.length; i < newSize; i++) {
+      src[i] = null;
+    }
+  } else {
+    ret = new src.constructor(newSize);
+    ret.set(src);
+    return ret;
+  }
 }
 
 function copy(dst, src, offset) {

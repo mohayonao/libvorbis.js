@@ -4,6 +4,12 @@ function NOP() {}
 function NOT_IMPLEMENTED() { throw new Error("not implemented."); }
 
 var assert = {};
+assert.isNotNaN = function(num) {
+  if (isNaN(num)) {
+    throw new Error("NaN!?");
+  }
+  return 0;
+};
 assert.instanceOf = function(object, typename) {
   switch (typename) {
   case "int":
@@ -53,11 +59,20 @@ function int(x) {
 }
 
 function pointer(src, offset, length) {
-  offset = (src.byteOffset + offset) * src.constructor.BYTES_PER_ELEMENT;
-  if (length) {
-    return new src.constructor(src.buffer, offset, length);
+  if (Array.isArray(src)) {
+    if (offset >= 0) {
+      return src.slice(offset, offset+length);
+    }
+    throw new Error("Ops.. Array["+offset+"]..");
   } else {
-    return new src.constructor(src.buffer, offset);
+    offset = (src.byteOffset + offset) * src.constructor.BYTES_PER_ELEMENT;
+    assert.isNotNaN(offset);
+    
+    if (typeof length === "number") {
+      return new src.constructor(src.buffer, offset, length);
+    } else {
+      return new src.constructor(src.buffer, offset);
+    }
   }
 }
 

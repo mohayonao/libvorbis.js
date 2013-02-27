@@ -2074,7 +2074,9 @@ var vwin = [
 ];
 
 function _vorbis_window_get(n) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(n, "int");
+  
+  return vwin[n];
 }
 
 function _vorbis_apply_window(d, winno, blocksizes, lW, W, nW) {

@@ -192,7 +192,7 @@ function vorbis_look_floor1(p) {
   p.phrasebits = 0;
   p.postbits = 0;
   p.frames = 0;
-  p.__name = "vorbis_info_floor1";
+  p.__name = "vorbis_look_floor1";
   
   return p;
 }

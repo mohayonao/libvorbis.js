@@ -10,58 +10,66 @@ assert.isNotNaN = function(num) {
   }
   return 0;
 };
-assert._toString = function(object) {
-  return typeof(object) + "(" + object.toString() + ")";
-};
-
-assert.instanceOf = function(object, typename) {
-  switch (typename) {
-  case "int":
-  case "long":
-    if (typeof object !== "number") {
-      throw new TypeError("require:"+typename+", but:" + assert._toString(object));
+assert.instanceOf = (function() {
+  function str(object) {
+    if (object.__name){
+      return object.__name;
     }
-    if (int(object) !== object) {
-      throw new TypeError("require:int, but:float, " + assert._toString(object));
-    }
-    break;
-  case "int*":
-    if (!(typeof object === "object" && object instanceof Int16Array)) {
-      throw new TypeError("require:int*, but:" + assert._toString(object));
-    }
-    break;
-  case "long*":
-    if (!(typeof object === "object" && object instanceof Int32Array)) {
-      throw new TypeError("require:int*, but:" + assert._toString(object));
-    }
-    break;
-  case "float":
-    if (typeof object !== "number") {
-      throw new TypeError("require:"+typename+", but:" + assert._toString(object));
-    }
-    break;
-  case "float*":
-    if (!(typeof object === "object" && object instanceof Float32Array)) {
-      throw new TypeError("require:float*, but:" + assert._toString(object));
-    }
-    break;
-  case "float***":
-    if (!Array.isArray(object)) {
-      throw new TypeError("require:float***, but:" + assert._toString(object));
-    }
-    break;
-  case "void":
-    if (typeof object !== "object") {
-      throw new TypeError("require:object, but:" + assert._toString(object));
-    }
-    break;
-  default:
-    if (object.__name !== typename) {
-      throw new TypeError("require:"+typename+", but:"+object.__name);
-    }
+    var objtype = Array.isArray(object) ? "array" : typeof(object);
+    return objtype + "(" + object.toString() + ")";
   }
-  return 0;
-};
+  
+  return function(object, typename) {
+    switch (typename) {
+    case "int":
+    case "long":
+      if (typeof object === "number" && int(object) === object) {
+        return 0;
+      }
+      break;
+    case "float":
+      if (typeof object === "number") {
+        return 0;
+      }
+      break;
+    case "char*":
+      if (object === null || object instanceof Uint8Array) {
+        return 0;
+      }
+      break;
+    case "int*":
+      if (object === null || object instanceof Int16Array) {
+        return 0;
+      }
+      break;
+    case "long*":
+      if (object === null || object instanceof Int32Array) {
+        return 0;
+      }
+      break;
+    case "float*":
+      if (object === null || object instanceof Float32Array) {
+        return 0;
+      }
+      break;
+    case "float***":
+      if (object === null || Array.isArray(object)) {
+        return 0;
+      }
+      break;
+    case "void":
+      if (object === null || typeof object === "object") {
+        return 0;
+      }
+      break;
+    default:
+      if (object.__name === typename) {
+        return 0;
+      }
+    }
+    throw new TypeError("require:"+typename+", but:"+str(object));
+  };
+})();
 
 function int(x) {
   return x|0;

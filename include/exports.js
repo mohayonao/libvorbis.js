@@ -31,3 +31,14 @@ function VorbisBlock() {
   this.synthesis = vorbis_synthesis.bind(null, this);
 }
 exports.vorbis.Block = VorbisBlock;
+
+function StaticCodebook(kv) {
+  static_codebook(this);
+  
+  if (kv) {
+    set_kv(this, kv);
+  }
+  
+  this._unquantize = _book_unquantize.bind(null, this);
+}
+exports.vorbis._StaticCodebook = StaticCodebook;

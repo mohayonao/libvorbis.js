@@ -202,6 +202,7 @@ function main() {
                 (-1.<=range<=1.) to whatever PCM format and write it out */
                 
                 while((samples=vd.pcmout(pcm))>0){
+                  pcm=pcm[0];
                   assert.instanceOf(samples, "int");
                   
                   clipflag=0;

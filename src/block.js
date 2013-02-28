@@ -174,7 +174,7 @@ function _vds_shared_init(v, vi, encp) {
         _vp_psy_init(b.psy[i],
                      ci.psy_param[i],
                      ci.psy_g_param,
-                     ci.blocksizes[ci.psy_param[i].blockflag]/2,
+                     ci.blocksizes[ci.psy_param[i].blockflag]>>1,
                      vi.rate);
       }
       
@@ -211,7 +211,7 @@ function _vds_shared_init(v, vi, encp) {
     v.W=0;  /* current window size */
     
     /* all vector indexes */
-    v.centerW=int(ci.blocksizes[1]/2);
+    v.centerW=ci.blocksizes[1]>>1;
     
     v.pcm_current=v.centerW;
     
@@ -380,7 +380,7 @@ function vorbis_synthesis_blockin(v, vb) {
         }else{
           /* large/small */
           w=_vorbis_window_get(b.window[0]-hs);
-          pcm=pointer(v.pcm[j],prevCenter+n1/2-n0/2);
+          pcm=pointer(v.pcm[j],prevCenter+(n1>>1)-(n0>>1));
           p=vb.pcm[j];
           for(i=0;i<n0;i++)
             pcm[i]=pcm[i]*w[n0-i-1] +p[i]*w[i];
@@ -390,10 +390,10 @@ function vorbis_synthesis_blockin(v, vb) {
           /* small/large */
           w=_vorbis_window_get(b.window[0]-hs);
           pcm=pointer(v.pcm[j],prevCenter);
-          p=pointer(vb.pcm[j],n1/2-n0/2);
+          p=pointer(vb.pcm[j],(n1>>1)-(n0>>1));
           for(i=0;i<n0;i++)
             pcm[i]=pcm[i]*w[n0-i-1] +p[i]*w[i];
-          for(;i<n1/2+n0/2;i++)
+          for(;i<(n1+n0)>>1;i++)
             pcm[i]=p[i];
         }else{
           /* small/small */
@@ -429,8 +429,8 @@ function vorbis_synthesis_blockin(v, vb) {
     }else{
       v.pcm_returned=prevCenter;
       v.pcm_current=prevCenter+
-        ((ci.blocksizes[v.lW]/4+
-        ci.blocksizes[v.W]/4)>>hs);
+        (((ci.blocksizes[v.lW]>>2)+
+          (ci.blocksizes[v.W]>>2))>>hs);
     }
   }
   
@@ -448,7 +448,7 @@ function vorbis_synthesis_blockin(v, vb) {
   if(b.sample_count===-1){
     b.sample_count=0;
   }else{
-    b.sample_count+=ci.blocksizes[v.lW]/4+ci.blocksizes[v.W]/4;
+    b.sample_count+=(ci.blocksizes[v.lW]>>2)+(ci.blocksizes[v.W]>>2);
   }
 
   if(v.granulepos===-1){
@@ -492,7 +492,7 @@ function vorbis_synthesis_blockin(v, vb) {
       }
     }
   }else{
-    v.granulepos+=ci.blocksizes[v.lW]/4+ci.blocksizes[v.W]/4;
+    v.granulepos+=ci.blocksizes[v.lW]/4+ci.blocksizes[v.W]>>2;
     if(vb.granulepos!==-1 && v.granulepos!==vb.granulepos){
 
       if(v.granulepos>vb.granulepos){

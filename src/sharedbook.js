@@ -157,7 +157,7 @@ function _book_unquantize(b, n, sparsemap) {
           last=0;
           indexdiv=1;
           for(k=0;k<b.dim;k++){
-            index= (j/indexdiv)%quantvals;
+            index= int(j/indexdiv)%quantvals;
             val=b.quantlist[index];
             val=Math.abs(val)*delta+mindel+last;
             if(b.q_sequencep)last=val;

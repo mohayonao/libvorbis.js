@@ -116,7 +116,7 @@ function mapping0_inverse(vb, l) {
       nonzero[i]=1;
     else
       nonzero[i]=0;
-    valset(vb.pcm[i],0,n/2);
+    valset(vb.pcm[i],0,n>>1);
   }
   
   /* channel coupling can 'dirty' the nonzero listing */
@@ -151,7 +151,7 @@ function mapping0_inverse(vb, l) {
     pcmM=vb.pcm[info.coupling_mag[i]];
     pcmA=vb.pcm[info.coupling_ang[i]];
     
-    for(j=0;j<n/2;j++){
+    for(j=0;j<n>>1;j++){
       mag=pcmM[j];
       ang=pcmA[j];
       

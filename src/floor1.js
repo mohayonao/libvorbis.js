@@ -169,7 +169,7 @@ function floor1_look(vd, _in) {
   /* points from sort order back to range number */
   // for(i=0;i<n;i++)look->forward_index[i]=sortpointer[i]-info->postlist;
   for(i=0;i<n;i++){
-    index=(sortpointer[i].byteOffset-info.postlist.byteOffset)/2;
+    index=(sortpointer[i].byteOffset-info.postlist.byteOffset)>>1;
     look.forward_index[i]=index;
   }
   /* points from range order to sorted position */
@@ -235,7 +235,7 @@ function render_point(x0, x1, y0, y1, x) {
     var ady=Math.abs(dy);
     var err=ady*(x-x0);
       
-    var off=err/adx;
+    var off=int(err/adx);
     if(dy<0)return(y0-off);
     return(y0+off);
   }
@@ -323,7 +323,7 @@ function render_line(n, x0, x1, y0, y1, d) {
   var dy=y1-y0;
   var adx=x1-x0;
   var ady=Math.abs(dy);
-  var base=dy/adx;
+  var base=int(dy/adx);
   var sy=(dy<0?base-1:base+1);
   var x=x0;
   var y=y0;

@@ -212,10 +212,10 @@ function main() {
                      interleave */
                   for(i=0;i<vi.channels;i++){
                     ptr=pointer(convbuffer,i);
-                    assert.instanceOf("int*");
+                    assert.instanceOf(ptr, "int*");
                     
                     mono=pcm[i];
-                    assert.instanceOf("float*");
+                    assert.instanceOf(mono, "float*");
                     
                     for(j=0;j<bout;j++){
                       // #if 1

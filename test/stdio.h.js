@@ -65,3 +65,76 @@ function pointer(src, offset, length) {
   }
 }
 global.pointer = pointer;
+
+function int(x) {
+  return x|0;
+}
+
+var assert = {};
+assert.isNotNaN = function(num) {
+  if (isNaN(num)) {
+    throw new Error("NaN!?");
+  }
+  return 0;
+};
+assert.instanceOf = (function() {
+  function str(object) {
+    if (object.__name){
+      return object.__name;
+    }
+    var objtype = Array.isArray(object) ? "array" : typeof(object);
+    return objtype + "(" + object.toString() + ")";
+  }
+  
+  return function(object, typename) {
+    switch (typename) {
+    case "int":
+    case "long":
+      if (typeof object === "number" && int(object) === object) {
+        return 0;
+      }
+      break;
+    case "float":
+      if (typeof object === "number") {
+        return 0;
+      }
+      break;
+    case "char*":
+      if (object === null || object instanceof Uint8Array) {
+        return 0;
+      }
+      break;
+    case "int*":
+      if (object === null || object instanceof Int16Array) {
+        return 0;
+      }
+      break;
+    case "long*":
+      if (object === null || object instanceof Int32Array) {
+        return 0;
+      }
+      break;
+    case "float*":
+      if (object === null || object instanceof Float32Array) {
+        return 0;
+      }
+      break;
+    case "float***":
+      if (object === null || Array.isArray(object)) {
+        return 0;
+      }
+      break;
+    case "void":
+      if (object === null || typeof object === "object") {
+        return 0;
+      }
+      break;
+    default:
+      if (object.__name === typename) {
+        return 0;
+      }
+    }
+    throw new TypeError("require:"+typename+", but:"+str(object));
+  };
+})();
+global.assert = assert;

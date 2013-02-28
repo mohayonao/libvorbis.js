@@ -83,7 +83,19 @@ assert.instanceOf = (function() {
       return object.__name;
     }
     var objtype = Array.isArray(object) ? "array" : typeof(object);
+    if (isContainsNaN.flag) {
+      object += " contains NaN";
+    }
     return objtype + "(" + object.toString() + ")";
+  }
+  
+  function isContainsNaN(object) {
+    for (var i = object.length; i--; ) {
+      if (isNaN(object[i])) {
+        return (isContainsNaN.flag = true);
+      }
+    }
+    return false;
   }
   
   return function(object, typename) {
@@ -95,28 +107,28 @@ assert.instanceOf = (function() {
       }
       break;
     case "float":
-      if (typeof object === "number") {
+      if (typeof object === "number" && !isNaN(object)) {
         return 0;
       }
       break;
     case "char*":
-      if (object === null || object instanceof Uint8Array) {
+      if (object === null || object instanceof Uint8Array && !isContainsNaN(object)) {
         return 0;
       }
       break;
     case "int*":
-      if (object === null || object instanceof Int16Array) {
-        return 0;
+      if (object === null || object instanceof Int16Array && !isContainsNaN(object)) {
+          return 0;
       }
       break;
     case "long*":
-      if (object === null || object instanceof Int32Array) {
-        return 0;
+      if (object === null || object instanceof Int32Array && !isContainsNaN(object)) {
+          return 0;
       }
       break;
     case "float*":
-      if (object === null || object instanceof Float32Array) {
-        return 0;
+      if (object === null || object instanceof Float32Array && !isContainsNaN(object)) {
+          return 0;
       }
       break;
     case "float***":

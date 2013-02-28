@@ -6,6 +6,8 @@ var stdin  = global.stdin  = {fp:null};
 var stdout = global.stdout = {fp:null};
 var stderr = global.stderr = {fp:null};
 
+global.NULL = null;
+
 function exit(id) {
   process.exit(id);
 }
@@ -31,8 +33,7 @@ function fprintf(stream, format) {
     }
   } else {
     if (!stderr.fp) {
-      str = str.replace(/\n$/g, "");
-      sys.error(str);
+      sys.print(str);
     }
   }
 }

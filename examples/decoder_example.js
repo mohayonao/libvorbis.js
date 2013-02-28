@@ -182,6 +182,7 @@ function main() {
                               this point */
             while(1){
               result=os.packetout(op);
+              assert.instanceOf(result, "int");
               
               if(result===0)break; /* need more data */
               /*jshint noempty:false */
@@ -201,17 +202,26 @@ function main() {
                 (-1.<=range<=1.) to whatever PCM format and write it out */
                 
                 while((samples=vd.pcmout(pcm))>0){
+                  assert.instanceOf(samples, "int");
+                  
                   clipflag=0;
                   bout=(samples<convsize?samples:convsize);
+                  assert.instanceOf(bout, "int");
                   
                   /* convert floats to 16 bit signed ints (host order) and
                      interleave */
                   for(i=0;i<vi.channels;i++){
                     ptr=pointer(convbuffer,i);
+                    assert.instanceOf("int*");
+                    
                     mono=pcm[i];
+                    assert.instanceOf("float*");
+                    
                     for(j=0;j<bout;j++){
                       // #if 1
                       val=Math.floor(mono[j]*32767+0.5);
+                      assert.instanceOf(val, "int");
+                      
                       // #else /* optional dither */
                       //   int val=mono[j]*32767.f+drand48()-0.5f;
                       // #endif
@@ -234,7 +244,8 @@ function main() {
                   if(clipflag)
                     fprintf(stderr,"Clipping in frame %ld\n",vd.sequence);
                   
-                  
+                  exit(0);
+                    
                   // fwrite(convbuffer,2*vi.channels,bout,stdout);
                   
                   vd.read(bout); /* tell libvorbis how

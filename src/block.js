@@ -552,7 +552,12 @@ function vorbis_synthesis_pcmout(v, pcm){
 }
 
 function vorbis_synthesis_read(v, n) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(v, "vorbis_dsp_state");
+  assert.instanceOf(n, "int");
+  
+  if(n && v.pcm_returned+n>v.pcm_current)return(OV_EINVAL);
+  v.pcm_returned+=n;
+  return(0);
 }
 
 /* intended for use with a specific vorbisfile feature; we want access

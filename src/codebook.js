@@ -225,7 +225,61 @@ function vorbis_book_decodevs_add(book, a, b, n) {
 
 /* decode vector / dim granularity gaurding is done in the upper layer */
 function vorbis_book_decodev_add(book, a, b, n) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(book, "codebook");
+  assert.instanceOf(a, "float*");
+  assert.instanceOf(b, "oggpack_buffer");
+  assert.instanceOf(n, "int");
+  
+  var i,j,entry,t;
+  
+  if(book.used_entries>0){
+    if(book.dim>8){
+      for(i=0;i<n;){
+        entry = decode_packed_entry_number(book,b);
+        if(entry===-1)return(-1);
+        t     = book.valuelist+entry*book.dim;
+        for (j=0;j<book.dim;)
+          a[i++]+=t[j++];
+      }
+    }else{
+      for(i=0;i<n;){
+        entry = decode_packed_entry_number(book,b);
+        if(entry===-1)return(-1);
+        t     = book.valuelist+entry*book.dim;
+        j=0;
+        
+        switch(book.dim|0){
+        case 8:
+          a[i++]+=t[j++];
+          /* falls through */
+        case 7:
+          a[i++]+=t[j++];
+          /* falls through */
+        case 6:
+          a[i++]+=t[j++];
+          /* falls through */
+        case 5:
+          a[i++]+=t[j++];
+          /* falls through */
+        case 4:
+          a[i++]+=t[j++];
+          /* falls through */
+        case 3:
+          a[i++]+=t[j++];
+          /* falls through */
+        case 2:
+          a[i++]+=t[j++];
+          /* falls through */
+        case 1:
+          a[i++]+=t[j++];
+          /* falls through */
+        case 0:
+          break;
+        }
+      }
+    }
+  }
+  return(0);
 }
 
 /* unlike the others, we guard against n not being an integer number

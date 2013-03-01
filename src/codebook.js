@@ -290,5 +290,30 @@ function vorbis_book_decodev_set(book, a, b, n) {
 }
 
 function vorbis_book_decodevv_add(book, a, offset, ch, b, n) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(book, "codebook");
+  assert.instanceOf(a, "float**");
+  assert.instanceOf(offset, "long");
+  assert.instanceOf(ch, "int");
+  assert.instanceOf(b, "oggpack_buffer");
+  assert.instanceOf(n, "int");
+  
+  var i,j,entry;
+  var chptr=0,t;
+  if(book.used_entries>0){
+    for(i=offset/ch;i<(offset+n)/ch;){
+      entry = decode_packed_entry_number(book,b);
+      if(entry===-1)return(-1);
+      {
+        t = pointer(book.valuelist,entry*book.dim);
+        for (j=0;j<book.dim;j++){
+          a[chptr++][i]+=t[j];
+          if(chptr===ch){
+            chptr=0;
+            i++;
+          }
+        }
+      }
+    }
+  }
+  return(0);
 }

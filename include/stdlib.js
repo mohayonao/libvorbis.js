@@ -64,6 +64,7 @@ assert.instanceOf = (function() {
           return 0;
       }
       break;
+    case "float**":
     case "float***":
       if (object === null || Array.isArray(object)) {
         return 0;

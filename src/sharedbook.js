@@ -76,8 +76,7 @@ function _make_words(l, n, sparsecount) {
   for(i=0,count=0;i<n;i++){
     temp=0;
     for(j=0;j<l[i];j++){
-      temp<<=1;
-      temp|=(r[count]>>>j)&1;
+      temp=((temp<<1)|((r[count]>>>j)&1))>>>0;
     }
     
     if(sparsecount){
@@ -309,7 +308,7 @@ function vorbis_book_init_decode(c, s) {
           word=i<<(32-c.dec_firsttablen);
           if(c.dec_firsttable[bitreverse(word)]===0){
             while((lo+1)<n && c.codelist[lo+1]<=word)lo++;
-            while(    hi<n && word>=(c.codelist[hi]&mask))hi++;
+            while(    hi<n && word>=(c.codelist[hi]&mask)>>>0)hi++;
             
             /* we only actually have 15 bits per hint to play with here.
                In order to overflow gracefully (nothing breaks, efficiency
@@ -321,7 +320,7 @@ function vorbis_book_init_decode(c, s) {
               if(loval>0x7fff)loval=0x7fff;
               if(hival>0x7fff)hival=0x7fff;
               c.dec_firsttable[bitreverse(word)]=
-                0x80000000 | (loval<<15) | hival;
+                (0x80000000 | (loval<<15) | hival)>>>0;
             }
           }
         }

@@ -56,10 +56,15 @@ function res0_pack(vr, opb){
 
 /* vorbis_info is for range checking */
 function res0_unpack(vi, opb) {
+  assert.instanceOf(vi, "vorbis_info");
+  assert.instanceOf(opb, "oggpack_buffer");
+  
   var j,acc=0;
   var info=vorbis_info_residue0();
   var ci=vi.codec_setup;
   var cascade,cflag,c,book,entries,dim,partvals;
+
+  assert.instanceOf(ci, "codec_setup_info");
   
   info.begin=oggpack_read(opb,24);
   info.end=oggpack_read(opb,24);
@@ -124,10 +129,15 @@ function res0_unpack(vi, opb) {
 }
 
 function res0_look(vd, vr) {
+  assert.instanceOf(vd, "vorbis_dsp_state");
+  
   var info=vr;
   var look=vorbis_look_residue0();
   var ci=vd.vi.codec_setup;
 
+  assert.instanceOf(info, "vorbis_info_residue0");
+  assert.instanceOf(ci, "codec_setup_info");
+  
   var j,k,acc=0;
   var dim;
   var maxstage=0;
@@ -200,6 +210,11 @@ function _01forward(opb, vb, vl, _in, ch, partword, encode, submap) {
 
 /* a truncated packet here just means 'stop working'; it's not an error */
 function _01inverse(vb, vl, _in, ch, decodepart) {
+  assert.instanceOf(vb, "vorbis_block");
+  assert.instanceOf(vl, "void");
+  assert.instanceOf(_in, "float**");
+  assert.instanceOf(ch, "int");
+  
   var i,j,k,l,s;
   var look=vl;
   var info=look.info;
@@ -273,6 +288,12 @@ function res1_class(vb, vl, _in, nonzero, ch) {
 }
 
 function res1_inverse(vb, vl, _in, nonzero, ch) {
+  assert.instanceOf(vb, "vorbis_block");
+  assert.instanceOf(vl, "void");
+  assert.instanceOf(_in, "float**");
+  assert.instanceOf(nonzero, "int*");
+  assert.instanceOf(ch, "int");
+  
   var i,used=0;
   for(i=0;i<ch;i++)
     if(nonzero[i])

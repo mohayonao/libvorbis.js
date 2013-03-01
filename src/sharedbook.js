@@ -301,14 +301,14 @@ function vorbis_book_init_decode(c, s) {
       /* now fill in 'unused' entries in the firsttable with hi/lo search
          hints for the non-direct-hits */
       {
-        mask=0xfffffffe<<(31-c.dec_firsttablen);
+        mask=(0xfffffffe<<(31-c.dec_firsttablen))>>>0;
         lo=0;hi=0;
         
         for(i=0;i<tabn;i++){
-          word=i<<(32-c.dec_firsttablen);
+          word=(i<<(32-c.dec_firsttablen))>>>0;
           if(c.dec_firsttable[bitreverse(word)]===0){
             while((lo+1)<n && c.codelist[lo+1]<=word)lo++;
-            while(    hi<n && word>=(c.codelist[hi]&mask)>>>0)hi++;
+            while(    hi<n && word>=((c.codelist[hi]&mask)>>>0))hi++;
             
             /* we only actually have 15 bits per hint to play with here.
                In order to overflow gracefully (nothing breaks, efficiency

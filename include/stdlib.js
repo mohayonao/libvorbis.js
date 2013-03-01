@@ -32,6 +32,7 @@ assert.instanceOf = (function() {
   }
   
   return function(object, typename) {
+    var i;
     switch (typename) {
     case "int":
     case "long":
@@ -65,6 +66,16 @@ assert.instanceOf = (function() {
       }
       break;
     case "float**":
+      if (object === null) {
+        return 0;
+      }
+      if (Array.isArray(object)) {
+        for (i = object.length; i--; ) {
+          assert.instanceOf(object[i], "float*");
+        }
+        return 0;
+      }
+      break;
     case "float***":
       if (object === null || Array.isArray(object)) {
         return 0;

@@ -182,7 +182,6 @@ function main() {
                               this point */
             while(1){
               result=os.packetout(op);
-              assert.instanceOf(result, "int");
               
               if(result===0)break; /* need more data */
               /*jshint noempty:false */
@@ -203,25 +202,20 @@ function main() {
                 
                 while((samples=vd.pcmout(pcm))>0){
                   pcm=pcm[0];
-                  assert.instanceOf(samples, "int");
                   
                   clipflag=0;
                   bout=(samples<convsize?samples:convsize);
-                  assert.instanceOf(bout, "int");
                   
                   /* convert floats to 16 bit signed ints (host order) and
                      interleave */
                   for(i=0;i<vi.channels;i++){
                     ptr=pointer(convbuffer,i);
-                    assert.instanceOf(ptr, "int*");
                     
                     mono=pcm[i];
-                    assert.instanceOf(mono, "float*");
                     
                     for(j=0;j<bout;j++){
                       // #if 1
                       val=Math.floor(mono[j]*32767+0.5);
-                      assert.instanceOf(val, "int");
                       
                       // #else /* optional dither */
                       //   int val=mono[j]*32767.f+drand48()-0.5f;
@@ -239,13 +233,13 @@ function main() {
                       // ptr+=vi.channels;
                       ptr[0]=val;
                       ptr=pointer(ptr, vi.channels);
+                      
+                      // console.log(val);
                     }
                   }
                   
                   if(clipflag)
                     fprintf(stderr,"Clipping in frame %ld\n",vd.sequence);
-                  
-                  exit(0);
                     
                   // fwrite(convbuffer,2*vi.channels,bout,stdout);
                   
@@ -291,4 +285,6 @@ function main() {
   return(0);
 }
 
+var begin = Date.now();
 main();
+console.log("time=%ssec", ((Date.now()-begin)*0.001).toFixed(3));

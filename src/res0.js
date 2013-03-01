@@ -316,7 +316,67 @@ function res2_forward(opb, vb, vl, _in, nonzero, ch, partword, submap) {
 
 /* duplicate code here as speed is somewhat more important */
 function res2_inverse(vb, vl, _in, nonzero, ch) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(vb, "vorbis_block");
+  assert.instanceOf(vl, "void");
+  assert.instanceOf(_in, "float**");
+  assert.instanceOf(nonzero, "int*");
+  assert.instanceOf(ch, "int");
+
+  var i,k,l,s;
+  var look=vl;
+  var info=look.info;
+
+  assert.instanceOf(look, "vorbis_look_residue0");
+  assert.instanceOf(info, "vorbis_info_residue0");
+
+  /* move all this setup out later */
+  var samples_per_partition=info.grouping;
+  var partitions_per_word=look.phrasebook.dim;
+  var max=(vb.pcmend*ch)>>1;
+  var end=(info.end<max?info.end:max);
+  var n=end-info.begin;
+  var partvals,partwords,partword,temp,stagebook;
+  
+  err_out:while(1){
+    if(n>0){
+      partvals=int(n/samples_per_partition);
+      partwords=int((partvals+partitions_per_word-1)/partitions_per_word);
+      partword=_vorbis_block_alloc(vb,partwords,[]);
+      
+      for(i=0;i<ch;i++)if(nonzero[i])break;
+        if(i===ch)return(0); /* no nonzero vectors */
+
+      for(s=0;s<look.stages;s++){
+        for(i=0,l=0;i<partvals;l++){
+
+          if(s===0){
+            /* fetch the partition word */
+            temp=vorbis_book_decode(look.phrasebook,vb.opb);
+            if(temp===-1 || temp>=info.partvals)break;
+            partword[l]=look.decodemap[temp];
+            if(partword[l]===NULL)break err_out;
+          }
+          
+          /* now we decode residual values for the partitions */
+          for(k=0;k<partitions_per_word && i<partvals;k++,i++)
+            if(info.secondstages[partword[l][k]]&(1<<s)){
+              stagebook=look.partbooks[partword[l][k]][s];
+              
+              if(stagebook){
+                if(vorbis_book_decodevv_add(stagebook,_in,
+                                            i*samples_per_partition+info.begin,ch,
+                                            vb.opb,samples_per_partition)===-1)
+                  break;
+              }
+            }
+        }
+      }
+    }
+    break;
+  }
+  // err_out:
+  // eopbreak:
+  return(0);
 }
 
 var residue0_exportbundle = vorbis_func_residue();

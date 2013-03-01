@@ -237,7 +237,7 @@ function vorbis_book_decodev_add(book, a, b, n) {
       for(i=0;i<n;){
         entry = decode_packed_entry_number(book,b);
         if(entry===-1)return(-1);
-        t     = book.valuelist+entry*book.dim;
+        t     = pointer(book.valuelist,entry*book.dim);
         for (j=0;j<book.dim;)
           a[i++]+=t[j++];
       }
@@ -245,10 +245,10 @@ function vorbis_book_decodev_add(book, a, b, n) {
       for(i=0;i<n;){
         entry = decode_packed_entry_number(book,b);
         if(entry===-1)return(-1);
-        t     = book.valuelist+entry*book.dim;
+        t     = pointer(book.valuelist,entry*book.dim);
         j=0;
         
-        switch(book.dim|0){
+        switch(book.dim){
         case 8:
           a[i++]+=t[j++];
           /* falls through */

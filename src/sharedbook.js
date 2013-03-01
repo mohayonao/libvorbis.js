@@ -261,7 +261,7 @@ function vorbis_book_init_decode(c, s) {
       c.codelist=calloc(n,uint32);
       /* the index is a reverse index */
       for(i=0;i<n;i++){
-        position=codep[i]-codes;
+        position=pointer.subtract(codep[i],codes);
         sortindex[position]=i;
       }
       

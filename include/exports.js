@@ -30,6 +30,7 @@ function VorbisBlock() {
   vorbis_block(this);
   
   this.synthesis = vorbis_synthesis.bind(null, this);
+  this.clear = vorbis_block_clear.bind(null, this);
 }
 exports.vorbis.Block = VorbisBlock;
 

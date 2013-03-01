@@ -116,7 +116,9 @@ function _vorbis_block_ripcord(vb) {
 }
 
 function vorbis_block_clear(vb) {
-  NOT_IMPLEMENTED();
+  assert.instanceOf(vb, "vorbis_block");
+  vorbis_block(vb);
+  return(0);
 }
 
 /* Analysis side code, but directly related to blocking.  Thus it's

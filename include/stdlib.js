@@ -113,6 +113,9 @@ function pointer(src, offset, length) {
     return new src.constructor(src.buffer, offset);
   }
 }
+pointer.subtract = function(a, b) {
+  return (a.byteOffset - b.byteOffset) / a.BYTES_PER_ELEMENT;
+};
 
 function set_kv(dst, src) {
   var val;

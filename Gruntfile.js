@@ -40,11 +40,11 @@ module.exports = function(grunt) {
           "include/exports.js",
           "build/footer.txt"
         ],
-        dest: "liboggvorbis.dev.js"
+        dest: "libvorbis.dev.js"
       }
     },
     jshint: {
-      dest    : ["liboggvorbis.dev.js"],
+      dest    : ["libvorbis.dev.js"],
       examples: ["examples/*.js"],
       tests   : ["test/*.js"],
       options: {
@@ -65,14 +65,14 @@ module.exports = function(grunt) {
     uglify: {
       all: {
         options: {
-          sourceMap: "liboggvorbis.js.map"
+          sourceMap: "libvorbis.js.map"
         },
         files: {
-          "liboggvorbis.js": ["liboggvorbis.dev.js"]
+          "libvorbis.js": ["libvorbis.dev.js"]
         }
       }
     },
-    clean: ["liboggvorbis.dev.js", "liboggvorbis.js", "liboggvorbis.js.map"]
+    clean: ["libvorbis.dev.js", "libvorbis.js", "libvorbis.js.map"]
   });
   
   grunt.registerTask("default", ["concat", "jshint:dest", "uglify"]);

@@ -14,9 +14,9 @@ stdin.fp = new Uint8Array(fs.readFileSync(__dirname + "/sample01.ogg"));
    stdout. Decodes simple and chained OggVorbis files from beginning
    to end. Vorbisfile.a is somewhat more complex than the code below.  */
 
-var liboggvorbis = require("../liboggvorbis.dev.js");
-var ogg    = liboggvorbis.ogg;
-var vorbis = liboggvorbis.vorbis;
+var libvorbis = require("../libvorbis.dev.js");
+var ogg    = libvorbis.ogg;
+var vorbis = libvorbis.vorbis;
 
 /* take 8k out of the data segment, not the stack */
 var convbuffer=new Int16Array(4096);
